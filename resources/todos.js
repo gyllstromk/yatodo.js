@@ -47,57 +47,74 @@ module.exports = function(app) {
     });
 
     app.post('/todos', function(req, res, next) {
-        console.log('post', req.body);
-        var todo = req.body.todo;
-        console.log(todo);
-        if (! todo.hasOwnProperty('completed')) {
-            todo.completed = false;
-        }
+        getTodo(req, function(todo) {
+//         var todo = req.body.todo;
+            console.log(todo);
+            if (! todo.hasOwnProperty('completed')) {
+                todo.completed = false;
+            }
 
-        if (! todo.created) {
-            todo.created = new Date();
-            console.log(todo.created);
-        }
+            if (! todo.created) {
+                todo.created = new Date();
+                console.log(todo.created);
+            }
 
-    //     todo.forEach(function(td) {
-    //         if (td.id) {
-    //             delete td.id;
-    //             delete td.dependers;
-    //             delete td.dependees;
-    //             delete td.due;
-    //         }
-    //     });
+        //     todo.forEach(function(td) {
+        //         if (td.id) {
+        //             delete td.id;
+        //             delete td.dependers;
+        //             delete td.dependees;
+        //             delete td.due;
+        //         }
+        //     });
 
-        console.log('todo', todo);
+            console.log('todo', todo);
 
-        require('mongodb').connect(url, function(err, connection) {
-            connection.collection('todos', function(err, collection) {
-                collection.save(todo, function(err, results) {
-                    console.log(err, results);
-                    res.send(200, { todo: results });
-                    connection.close();
+            require('mongodb').connect(url, function(err, connection) {
+                connection.collection('todos', function(err, collection) {
+                    collection.save(todo, function(err, results) {
+                        console.log(err, results);
+                        res.send(200, { todo: results });
+                        connection.close();
+                    });
                 });
             });
         });
     });
 
-    app.put('/todos/:id', function(req, res, next) {
-        var todo = req.body.todo;
+    var getTodo = function(req, callback) {
+        var data = '';
 
-        require('mongodb').connect(url, function(err, connection) {
-            console.log(err);
-            connection.collection('todos', function(err, collection) {
-                console.log(todo);
-                todo._id = require('mongodb').ObjectID.createFromHexString(todo._id);
-                todo.created = new Date(todo.created);
-                collection.update({ _id: todo._id }, todo, function(err, result) {
-                    console.log(err);
-                    collection.save(todo, function(err, result) {
-                        console.log('ok', err, result);
-                        console.log(todo);
-                        console.log({ todo: todo });
-                        res.send(200, { todo: todo });
-                        connection.close();
+        req.on('data', function(res) {
+            data += res;
+        });
+
+        req.on('end', function() {
+            callback(JSON.parse(data.toString()).todo);
+        });
+    };
+
+    app.put('/todos/:id', function(req, res, next) {
+// 
+//             
+//             var todo = req.body.todo;
+
+        getTodo(req, function(todo) {
+            require('mongodb').connect(url, function(err, connection) {
+                console.log(err);
+                connection.collection('todos', function(err, collection) {
+                    console.log(todo);
+                    todo._id = require('mongodb').ObjectID.createFromHexString(todo._id);
+                    todo.created = new Date(todo.created);
+                    collection.update({ _id: todo._id }, todo, function(err, result) {
+                        console.log(err);
+                        collection.save(todo, function(err, result) {
+                            console.log('ok', err, result);
+                            console.log(todo);
+                            console.log({ todo: todo });
+                            res.send(200, { todo: todo });
+                            connection.close();
+                        });
                     });
                 });
             });
@@ -118,9 +135,16 @@ module.exports = function(app) {
 //     });
 
     app.del('/todos/:id', function(req, res, next) {
-        mongo.removeById('todos', req.params.id, function(result) {
-            console.log(result);
-            res.send(200, { todo: result });
+        var id = require('mongodb').ObjectID.createFromHexString(req.params.id);
+
+        require('mongodb').connect(url, function(err, connection) {
+            connection.collection('todos', function(err, collection) {
+                collection.remove({ _id: id }, function(err, result) {
+                    console.log(result);
+                    res.send(200);
+                    connection.close();
+                });
+            });
         });
     });
 };
