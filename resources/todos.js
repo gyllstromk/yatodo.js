@@ -1,10 +1,7 @@
 var sugar = require('sugar'),
     mongodb = require('mongodb');
 
-var easymongo = require('easymongo');
-var mongo = new easymongo({ db: 'test' });
-
-var url = 'mongodb://127.0.0.1:27017/test';
+var url = 'mongodb://127.0.0.1:27017/todosback';
 
 module.exports = function(app) {
     app.get('/todos', function(req, res, next) {
@@ -144,6 +141,20 @@ module.exports = function(app) {
                     res.send(200);
                     connection.close();
                 });
+            });
+        });
+    });
+
+    app.put('/cleantodos', function(req, res, next) {
+//         var id = require('mongodb').ObjectID.createFromHexString(req.params.id);
+
+        require('mongodb').connect(url, function(err, connection) {
+            connection.collection('todos', function(err, collection) {
+                var cursor = collection.find(req.query);
+                cursor.each(function(err, item) {
+                    console.log(item);
+                });
+                res.send(200);
             });
         });
     });
