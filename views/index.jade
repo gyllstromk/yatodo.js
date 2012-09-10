@@ -33,7 +33,7 @@ html(lang='en')
           script(id='todosTemplate', type='text/x-handlebars')
             | {{#unless view.editing}}
             |   {{view Ember.Checkbox checkedBinding="view.content.completed" class="toggle"}}
-            |   {{view.content.title}}
+            |   {{view.content.title}} {{ view.content.created }}
             |   {{#each tag in view.tags}}
             |   {{view view.TagView contentBinding="tag"}}
             |   {{/each}}
