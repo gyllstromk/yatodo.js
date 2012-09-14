@@ -14,45 +14,83 @@ Ember.PageableRoute = Ember.Route.extend({
 //         context.page = controller.get('page');
         controller.set('filterBy', this.filterBy(context));
 
-        router.get('applicationController').connectOutlet('todos');
+        router.get('applicationController').connectOutlet('todos', controller);
     }
 });
 
-var Router = Ember.Router.extend({
-    page: function() {
-        var page = this.get('location.lastSetURL').split('/').pop();
-        console.log('router:page', page);
-        return (page && parseInt(page, 10)) || 0;
-    }.property('location.lastSetURL'),
+var makePageRoute = function(prefix) {
+    if (! prefix) {
+        prefix = '';
+    }
 
-    root: Ember.Route.extend({
-        showAll: Ember.Route.transitionTo('all'),
-        showActive: Ember.Route.transitionTo('active'),
-        showTags: Ember.Route.transitionTo('tag'),
+    return Ember.Route.extend({
+        showPage: Ember.Route.transitionTo('page'),
+
+        filterBy: function() {
+            return {};
+        },
 
         index: Ember.Route.extend({
             route: '/',
-            redirectsTo: 'all'
+
+            connectOutlets: function(router, context) {
+                console.log('ctx', context);
+                router.send('showPage', { page: 0 });
+            },
+
+            page: Ember.Route.extend({
+                route: prefix + '/:page',
+                connectOutlets: function(router, context) {
+                    console.log('CNTXT', context);
+                    var controller = App.entriesController;
+                    controller.set('page', (context && context.page) || 0);
+                    console.log(this);
+                    controller.set('filterBy', this.parentState.parentState.filterBy(context));
+                    router.get('applicationController').connectOutlet('todos', controller);
+                }
+            })
+        })
+    });
+}
+
+
+var Router = Ember.Router.extend({
+    enableLogging: true,
+
+    page: function() {
+        try {
+            var page = this.get('location.lastSetURL').split('/').pop();
+            console.log('router:page', page);
+            return (page && parseInt(page, 10)) || 0;
+        } catch (error) {
+            return 0;
+        }
+    }.property('location.lastSetURL'),
+
+    root: Ember.Route.extend({
+        index: Ember.Route.extend({
+            route: '/',
+            redirectsTo: 'todos',
         }),
 
-        all: Ember.PageableRoute.extend({
-            route: '/all/:page',
-            filterBy: function(context) {}
+        todos: makePageRoute().extend({
+            route: '/todos',
         }),
 
-        active: Ember.PageableRoute.extend({
-            route: '/active/:page',
-            filterBy: function(context) {
+        active: makePageRoute().extend({
+            route: '/active',
+            filterBy: function() {
                 return { completed: false };
             }
         }),
 
-        tag: Ember.PageableRoute.extend({
-            route: '/todos/:name/:page',
+        tags: makePageRoute('/:tag').extend({
+            route: '/tags',
+
             filterBy: function(context) {
-                return { tags: context.name };
+                return { tags: context.tag };
             }
-        })
+        }),
     })
 });
 
@@ -181,23 +219,19 @@ var Pagination = Ember.View.extend({
         contentBinding: 'view.pages',
         tagName: 'ul',
         itemViewClass: Ember.View.extend({
-            click: function() {
-                console.log('CLICK');
-                var router = App.router;
-                var page = this.get('content');
-
-                if (page === 'Prev') {
-                    page = App.router.page() - 1;
-                } else if (page === 'Next') {
-                    page = App.router.page() + 1;
-                } else {
-                    page = (page && parseInt(page)) || 0;
+            click: function(event) {
+                var context = { page: this.get('content') };
+                if (App.router.get('currentState.parentState.parentState.name') === 'tags') {
+                    var components = App.router.get('location.lastSetURL').split('/');
+                    components.pop();
+                    var tag = components.pop();
+                    context.tag = tag;
                 }
 
-                console.log('page', page);
-                router.send('showAll', { page: page });
+                console.log('context', context);
+                App.router.send('showPage', context);
             },
-            template: Ember.Handlebars.compile('<a href="#">{{ view.content }}</a>'),
+            template: Ember.Handlebars.compile('<a>{{ view.content }}</a>'),
         })
     }),
 });
@@ -230,7 +264,7 @@ var NavigationBar = Ember.View.extend({
 
                 switch (this.get('content')) {
                     case 'all':
-                        router.send('showAll');
+                        router.send('showPage');
                         break;
                     case 'active':
                         router.send('showActive');
