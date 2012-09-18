@@ -126,6 +126,7 @@ App.Todo = DS.Model.extend({
     tags: DS.attr('array'),
     completed: DS.attr('boolean'),
     created: DS.attr('date'),
+    due: DS.attr('date'),
 
     didCreate: function() {
         App.entriesController.set('dirty', true);
@@ -325,6 +326,24 @@ var TodosView = Ember.CollectionView.extend({
             }
         }),
 
+        DueView: Ember.View.extend({
+            tagName: 'span',
+            classNameBindings: ['hasDueDate:icon-time'],
+            mouseEnter: function() {
+                var title = this.get('parentView.content.due');
+                this.$().tooltip({ title: title.toString(), placement: 'right',
+                    trigger: 'manual' });
+                this.$().tooltip('show');
+                return true;
+            },
+            mouseLeave: function() {
+                this.$().tooltip('hide');
+            },
+            hasDueDate: function() {
+                return typeof this.get('parentView.content.due') !== 'undefined';
+            }.property()
+        }),
+
         tags: function() {
             return this.get('content').get('tags').map(function(entry) {
                 return { name: entry };
@@ -341,13 +360,18 @@ var TodosView = Ember.CollectionView.extend({
                 content.set('tags', todo.tags);
                 console.log('set content');
             } else {
-                var tag_portion = this.get('content').get('tags').map(function(entry) {
+                var tag_portion = this.get('content.tags').map(function(entry) {
                     return ':' + entry;
                 }).join(' ');
 
                 console.log('translate', tag_portion);
 
-                return this.get('content').get('title') + (tag_portion.length > 0 ? ' ' + tag_portion : '');
+                var datePortion = this.get('content.due');
+                if (datePortion) {
+                    datePortion = '@' + [datePortion.getMonth(), datePortion.getDay()].join('/') + '|' + [datePortion.getHours(), datePortion.getMinutes()].join(':');
+                }
+
+                return [this.get('content').get('title'), tag_portion, datePortion].join(' ');
             }
         }.property('content'),
 
@@ -364,6 +388,7 @@ var TodosView = Ember.CollectionView.extend({
 
         classNameBindings: ['content.completed:completed'],
         templateName: 'todosTemplate',
+
         EditorView: Ember.TextField.extend({
 //             value: function(name, value) {
 //                 if (value) {
@@ -387,17 +412,50 @@ var TodosView = Ember.CollectionView.extend({
 App.TodosView = TodosView;
 
 function todoFromString(value) {
-    var title = [], tags = [];
+    var title = [], tags = [], due;
 
     value.split(' ').forEach(function(word) {
         if (word[0] === ':') {
             tags.pushObject(word.slice(1));
+        } else if (word[0] === '@') {
+            word = word.slice(1);
+            var date, time;
+
+            if (word.indexOf('|') !== -1) {
+                var tokens = word.split('|');
+                date = tokens[0];
+                time = tokens[1];
+            } else {
+                date = word;
+            }
+
+            var dayMonth = date.split('/').map(function(token) {
+                return parseInt(token, 10);
+            });
+
+            var hourMinute = time ? time.split(':').map(function(token) {
+                return parseInt(token, 10);
+            }) : null;
+
+            if (dayMonth.length === 2) {
+                due = new Date(new Date().getFullYear(), dayMonth[1] - 1, dayMonth[0]);
+
+                if (due.isPast()) {
+                    due = due.addYears(1);
+                }
+            } else {
+                due = new Date(dayMonth);
+            }
+
+            if (hourMinute) {
+                due = due.set({ hour: hourMinute[0], minute: hourMinute[1] });
+            }
         } else {
             title.pushObject(word);
         }
     });
 
-    return { title: title.join(' '), tags: tags };
+    return { title: title.join(' '), tags: tags, due: due };
 }
 
 var ApplicationView = Ember.ContainerView.extend({
