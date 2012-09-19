@@ -14,15 +14,6 @@ html(lang='en')
     link(rel='shortcut icon', href='assets/ico/favicon.ico')
     script(src='assets/js/jquery.js')
 
-    script(type='text/javascript')
-      $(function() {
-        $('#datepicker')
-          .datepicker()
-          .on('changeDate', function(event) {
-            $('#datepicker').datepicker('hide');
-          });
-      });
-
   body
     script(id='navigationbar', type='text/x-handlebars')
       .navbar
