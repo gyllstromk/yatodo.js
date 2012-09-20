@@ -43,7 +43,7 @@ var makePageRoute = function(prefix) {
             })
         })
     });
-}
+};
 
 
 var Router = Ember.Router.extend({
@@ -59,11 +59,17 @@ var Router = Ember.Router.extend({
         }
     }.property('location.lastSetURL'),
 
+    currentTag: function() {
+        var url = this.get('location.lastSetURL').split('/');
+        if (url[1] === 'tags') {
+            return url[2];
+        }
+    }.property('currentState'),
+
     root: Ember.Route.extend({
         index: Ember.Route.extend({
             route: '/',
             connectOutlets: function(router, context) {
-                console.log('eh');
                 router.send('showTodos');
             }
         }),
@@ -73,7 +79,7 @@ var Router = Ember.Router.extend({
         },
 
         todos: makePageRoute().extend({
-            route: '/todos',
+            route: '/todos'
         }),
 
         showActive: function(router, context) {
@@ -100,7 +106,7 @@ var Router = Ember.Router.extend({
             filterBy: function(context) {
                 return { tags: context.tag };
             }
-        }),
+        })
     })
 });
 
@@ -203,7 +209,7 @@ var EntriesController = Ember.ArrayController.extend({
 });
 
 var TodosController = Ember.ArrayController.extend({
-    contentBinding: 'App.entriesController',
+    contentBinding: 'App.entriesController'
 //     sortProperties: ['created'],
 //     sortAscending: false
 });
@@ -252,9 +258,9 @@ var Pagination = Ember.View.extend({
                 console.log('context', context);
                 App.router.send('showPage', context);
             },
-            template: Ember.Handlebars.compile('<a>{{ view.content.title }}</a>'),
+            template: Ember.Handlebars.compile('<a>{{ view.content.title }}</a>')
         })
-    }),
+    })
 });
 
 var NavigationBar = Ember.View.extend({
@@ -267,7 +273,19 @@ var NavigationBar = Ember.View.extend({
 
         itemViewClass: Ember.View.extend({
             isActive: function() {
-                return App.router.get('currentState.name') === this.get('content');
+                var title;
+
+                if (this.get('content') === 'all') {
+                    title = 'todos';
+                } else if (this.get('content').startsWith('tag')) {
+                    title = 'tags'; // XXX will break
+                } else {
+                    title = this.get('content');
+                }
+
+                console.log('title', title, App.router.get('currentState.parentState.parentState.name'));
+
+                return App.router.get('currentState.parentState.parentState.name') === title;
             }.property('App.router.currentState'),
 
             classNameBindings: ['isActive:active'],
@@ -364,8 +382,6 @@ var TodosView = Ember.CollectionView.extend({
                     return ':' + entry;
                 }).join(' ');
 
-                console.log('translate', tag_portion);
-
                 var datePortion = this.get('content.due');
                 if (datePortion) {
                     datePortion = '@' + [datePortion.getMonth(), datePortion.getDay()].join('/') + '|' + [datePortion.getHours(), datePortion.getMinutes()].join(':');
@@ -433,6 +449,8 @@ function todoFromString(value) {
                 return parseInt(token, 10);
             });
 
+            console.log('dayMonth', dayMonth);
+
             var hourMinute = time ? time.split(':').map(function(token) {
                 return parseInt(token, 10);
             }) : null;
@@ -449,11 +467,17 @@ function todoFromString(value) {
 
             if (hourMinute) {
                 due = due.set({ hour: hourMinute[0], minute: hourMinute[1] });
+                console.log(due);
             }
         } else {
             title.pushObject(word);
         }
     });
+
+    var currentTag = App.get('router.currentTag');
+    if (currentTag && tags.indexOf(currentTag) === -1) {
+        tags.push(currentTag);
+    }
 
     return { title: title.join(' '), tags: tags, due: due };
 }
@@ -482,7 +506,7 @@ var ApplicationView = Ember.ContainerView.extend({
         submit: Ember.View.create({
             tagName: 'button',
             classNames: ['btn btn-primary'],
-            template: Ember.Handlebars.compile('Add'),
+            template: Ember.Handlebars.compile('Add')
         })
     }),
 
