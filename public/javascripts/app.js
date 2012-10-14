@@ -130,7 +130,7 @@ App.Todo = DS.Model.extend({
 
 var EntriesController = Ember.ArrayController.extend({
     active: false,
-    tag: null,
+    tags: null,
 
     page: 0,
     dirty: false,
@@ -145,8 +145,8 @@ var EntriesController = Ember.ArrayController.extend({
             query.completed = false;
         }
 
-        if (this.get('tag')) {
-            query.tags = this.get('tag');
+        if (this.get('tags')) {
+            query.tags = this.get('tags');
         }
 
         var defaultQuery = { page: this.get('page'), page_size: 40 };
@@ -156,9 +156,7 @@ var EntriesController = Ember.ArrayController.extend({
         var result = App.store.findQuery(App.Todo, query);
         this.set('dirty', false);
         return result;
-
-//         return this.get('content');
-    }.property('page', 'tag', 'active', 'dirty'),
+    }.property('page', 'tags', 'active', 'dirty'),
 
     replaceContent: function(idx, amt, objects) {
         objects.forEach(function(entry) {
@@ -170,19 +168,9 @@ var EntriesController = Ember.ArrayController.extend({
     },
 
     remove: function(todo) {
-//         var record = App.store.find(App.Todo, { title: todo.title });
-//         console.log(record);
-//         record.deleteRecord();
-//         App.store.commit();
         todo.deleteRecord();
-//         var td = App.store.find(App.Todo, todo._id);
-//         console.log('td', td.objectAt(0));
-//         td.objectAt(0).deleteRecord();
-//         App.store.deleteRecord(todo);
         App.store.commit();
         this.set('dirty', true);
-//                     controller.removeAt(controllerthis.get('content'));
-//                     App.store.commit();
     }
 });
 
@@ -284,7 +272,7 @@ var NavigationBar = Ember.View.extend({
                         router.send('showTodos');
                         break;
                     default:
-                        App.entriesController.set('tag', this.get('content').split(':')[1]);
+                        App.entriesController.set('tags', this.get('content').split(':')[1]);
                         break;
                 }
             },
@@ -314,7 +302,7 @@ var TodosView = Ember.CollectionView.extend({
             classNames: ['label'],
             template: Ember.Handlebars.compile('{{ tag.name }}'),
             click: function() {
-                App.entriesController.set('tag', this.get('content.name'));
+                App.entriesController.set('tags', this.get('content.name'));
             }
         }),
 
@@ -463,19 +451,30 @@ var ApplicationView = Ember.ContainerView.extend({
     paginationView: Pagination.create(),
 
     inputView: Ember.View.create({
-        childViews: ['title', 'filterView'],
+        childViews: ['TitleView', 'ActiveFilterView'],
         templateName: 'input',
 
-        title: Ember.TextField.extend({
+        TitleView: Ember.TextField.extend({
             todosBinding: 'controller.namespace.todos',
             insertNewline: function() {
                 var value = this.get('value');
                 if (value) {
-//                     App.store.createRecord(App.Todo, todoFromString(value));
-//                     App.store.commit();
                     this.get('controller.namespace.todosController.content').pushObject(todoFromString(value));
                     this.set('value', '');
                 }
+            }
+        }),
+
+        TagFilterView: Ember.View.extend({
+            contentBinding: 'App.entriesController.tags',
+            tagName: 'span',
+            isVisible: function() {
+                return this.get('content') !== null;
+            }.property('content'),
+
+            template: Ember.Handlebars.compile('Tags: <span class="label">{{ view.content }}</span>'),
+            click: function(event) {
+                App.entriesController.set('tags', null);
             }
         }),
 
@@ -485,7 +484,7 @@ var ApplicationView = Ember.ContainerView.extend({
 //             template: Ember.Handlebars.compile('Add')
 //         }),
 
-        filterView: Ember.Checkbox.extend({
+        ActiveFilterView: Ember.Checkbox.extend({
              checkedBinding: 'App.entriesController.active'
         }),
     }),

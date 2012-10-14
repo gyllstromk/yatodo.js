@@ -21,8 +21,9 @@ html(lang='en')
           {{ view view.LinksView }}
 
     script(id='input', type='text/x-handlebars')
-      div {{ view view.title }}
-      label Active {{ view view.filterView }}
+      div {{ view view.TitleView }}
+      div {{ view view.TagFilterView }}
+      label Active {{ view view.ActiveFilterView }}
 
     .container-fluid
       .row-fluid
