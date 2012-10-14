@@ -37,7 +37,7 @@ var makePageRoute = function(prefix) {
                     var controller = App.entriesController;
                     controller.set('page', (context && context.page) || 0);
                     console.log(this);
-                    controller.set('filterBy', this.parentState.parentState.filterBy(context));
+//                     controller.set('filterBy', App.filterController.get('filter'));
                     router.get('applicationController').connectOutlet('todos', controller);
                 }
             })
@@ -80,18 +80,6 @@ var Router = Ember.Router.extend({
 
         todos: makePageRoute().extend({
             route: '/todos'
-        }),
-
-        showActive: function(router, context) {
-            router.transitionTo('root.active.index.page', { page: 0 });
-        },
-
-        active: makePageRoute().extend({
-            route: '/active',
-            filterBy: function() {
-                console.log('active:filterBy');
-                return { completed: false };
-            }
         }),
 
         showTags: function(router, context) {
@@ -140,9 +128,10 @@ App.Todo = DS.Model.extend({
     }
 });
 
-
 var EntriesController = Ember.ArrayController.extend({
-    filterBy: null,
+    active: false,
+    tag: null,
+
     page: 0,
     dirty: false,
 
@@ -150,35 +139,26 @@ var EntriesController = Ember.ArrayController.extend({
 //     sortAscending: false,
 
     content: function() {
-        var query = this.get('filterBy') || {};
-        console.log('this', this.get('page'));
+        console.log('here');
+        var query = {};
+        if (this.get('active')) {
+            query.completed = false;
+        }
+
+        if (this.get('tag')) {
+            query.tags = this.get('tag');
+        }
+
         var defaultQuery = { page: this.get('page'), page_size: 40 };
-        console.log(defaultQuery);
 
         query = Object.merge(defaultQuery, query);
-        console.log(query);
-        console.log('wwwwww');
 
-//         return App.Todo.filter(query);
-//             console.log('here');
-//             return true;
-//         });
-//         this.set('content', App.Todo.filter(query));
-//         this.set('content', App.store.findQuery(App.Todo, query));
         var result = App.store.findQuery(App.Todo, query);
         this.set('dirty', false);
         return result;
 
 //         return this.get('content');
-    }.property('page', 'filterBy', 'dirty'),
-
-//     arrangedContent: Ember.computed('content', function() {
-// //         var filterBy = this.get('filterBy');
-// //         if (filterBy) {
-// //             return this.get('content').filter(filterBy);
-// //         }
-//         return this.get('content');
-//     }),
+    }.property('page', 'tag', 'active', 'dirty'),
 
     replaceContent: function(idx, amt, objects) {
         objects.forEach(function(entry) {
@@ -187,11 +167,9 @@ var EntriesController = Ember.ArrayController.extend({
         });
 
         App.store.commit();
-//         this.set('dirty', true);
     },
 
     remove: function(todo) {
-        console.log('thiiis', todo);
 //         var record = App.store.find(App.Todo, { title: todo.title });
 //         console.log(record);
 //         record.deleteRecord();
@@ -269,7 +247,7 @@ var NavigationBar = Ember.View.extend({
     LinksView: Ember.CollectionView.extend({
         tagName: 'ul',
         classNames: ['nav'],
-        content: ['all', 'active', 'tag:work'],
+        content: ['all', 'tag:work'],
 
         itemViewClass: Ember.View.extend({
             isActive: function() {
@@ -305,11 +283,8 @@ var NavigationBar = Ember.View.extend({
                     case 'all':
                         router.send('showTodos');
                         break;
-                    case 'active':
-                        router.send('showActive');
-                        break;
                     default:
-                        router.send('showTags', { tag: this.get('content').split(':')[1] });
+                        App.entriesController.set('tag', this.get('content').split(':')[1]);
                         break;
                 }
             },
@@ -339,8 +314,7 @@ var TodosView = Ember.CollectionView.extend({
             classNames: ['label'],
             template: Ember.Handlebars.compile('{{ tag.name }}'),
             click: function() {
-                var router = this.get('controller.namespace.router');
-                router.send('showTags', { tag: this.get('content.name') });
+                App.entriesController.set('tag', this.get('content.name'));
             }
         }),
 
@@ -488,9 +462,11 @@ var ApplicationView = Ember.ContainerView.extend({
     navbarView: NavigationBar.create(),
     paginationView: Pagination.create(),
 
-    inputView: Ember.ContainerView.create({
-        childViews: ['title', 'submit'],
-        title: Ember.TextField.create({
+    inputView: Ember.View.create({
+        childViews: ['title', 'filterView'],
+        templateName: 'input',
+
+        title: Ember.TextField.extend({
             todosBinding: 'controller.namespace.todos',
             insertNewline: function() {
                 var value = this.get('value');
@@ -503,11 +479,15 @@ var ApplicationView = Ember.ContainerView.extend({
             }
         }),
 
-        submit: Ember.View.create({
-            tagName: 'button',
-            classNames: ['btn btn-primary'],
-            template: Ember.Handlebars.compile('Add')
-        })
+//         submit: Ember.View.create({
+//             tagName: 'button',
+//             classNames: ['btn btn-primary'],
+//             template: Ember.Handlebars.compile('Add')
+//         }),
+
+        filterView: Ember.Checkbox.extend({
+             checkedBinding: 'App.entriesController.active'
+        }),
     }),
 
     mainView: Ember.View.create({

@@ -20,6 +20,10 @@ html(lang='en')
         .navbar-inner
           {{ view view.LinksView }}
 
+    script(id='input', type='text/x-handlebars')
+      div {{ view view.title }}
+      label Active {{ view view.filterView }}
+
     .container-fluid
       .row-fluid
         .span4
