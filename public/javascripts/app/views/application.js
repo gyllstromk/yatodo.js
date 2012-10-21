@@ -1,4 +1,4 @@
-define('app/views/application', function() {
+define('app/views/application', ['app/views/todoFromString'], function(todoFromString) {
     var NavigationBar = Ember.View.extend({
         templateName: 'navigationbar',
 
@@ -95,8 +95,6 @@ define('app/views/application', function() {
         })
     });
 
-
-
     return Ember.ContainerView.extend({
         childViews: [ 'navbarView', 'inputView', 'mainView', 'paginationView' ],
 
@@ -112,7 +110,7 @@ define('app/views/application', function() {
                 insertNewline: function() {
                     var value = this.get('value');
                     if (value) {
-                        this.get('controller.namespace.todosController.content').pushObject(todoFromString(value));
+                        this.get('controller.namespace.entriesController').pushObject(todoFromString(value));
                         this.set('value', '');
                     }
                 }

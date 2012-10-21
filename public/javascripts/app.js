@@ -1,6 +1,15 @@
-define('app', ['app/views/application'], function(ApplicationView) {
+define('app', ['app/views/application', 'app/views/todos'], function(ApplicationView, TodosView) {
+    var TodosController = Ember.ArrayController.extend({
+    //     sortProperties: ['created'],
+    //     sortAscending: false
+    });
+
     var App = Em.Application.create({
         ApplicationController: Ember.Controller.extend(),
+        ApplicationView: ApplicationView,
+        TodosView: TodosView,
+        TodosController: TodosController,
+        todosController: TodosController.create(),
         rootElement: '#appapp',
         ready: function() {
             this.initialize();
@@ -100,7 +109,7 @@ define('app', ['app/views/application'], function(ApplicationView) {
     });
 
 
-    App.store = DS.Store.create({
+    var store = DS.Store.create({
         revision: 4,
         adapter: DS.RESTAdapter.create({})
     });
@@ -130,6 +139,7 @@ define('app', ['app/views/application'], function(ApplicationView) {
     });
 
     var EntriesController = Ember.ArrayController.extend({
+        Todo: App.Todo,
         active: false,
         tags: null,
 
@@ -154,203 +164,33 @@ define('app', ['app/views/application'], function(ApplicationView) {
 
             query = Object.merge(defaultQuery, query);
 
-            var result = App.store.findQuery(App.Todo, query);
+            var result = store.findQuery(this.get('Todo'), query);
             this.set('dirty', false);
             return result;
         }.property('page', 'tags', 'active', 'dirty'),
 
         replaceContent: function(idx, amt, objects) {
+            var that = this;
             objects.forEach(function(entry) {
                 console.log('envtry', entry);
-                App.store.createRecord(App.Todo, entry);
+                store.createRecord(that.get('Todo'), entry);
             });
 
-            App.store.commit();
+            store.commit();
         },
 
         remove: function(todo) {
             todo.deleteRecord();
-            App.store.commit();
+            store.commit();
             this.set('dirty', true);
         }
     });
 
-    var TodosController = Ember.ArrayController.extend({
-        contentBinding: 'App.entriesController'
-    //     sortProperties: ['created'],
-    //     sortAscending: false
-    });
-
-
     App.entriesController = EntriesController.create();
-
-    App.TodosController = TodosController;
-    App.todosController = TodosController.create();
-
-
-    var TodosView = Ember.CollectionView.extend({
-        contentBinding: 'controller.content',
-        tagName: 'ul',
-
-        change: function(evt) {
-            console.log('www', this.get('content'));
-            console.log(evt);
-            App.store.commit();
-        },
-
-        itemViewClass: Ember.View.extend({
-            doubleClick: function() {
-                this.set('editing', true);
-            },
-
-            TagView: Ember.View.extend({
-                tagName: 'span',
-                classNames: ['label'],
-                template: Ember.Handlebars.compile('{{ tag.name }}'),
-                click: function() {
-                    App.entriesController.set('tags', this.get('content.name'));
-                }
-            }),
-
-            DueView: Ember.View.extend({
-                tagName: 'span',
-                classNameBindings: ['hasDueDate:icon-time'],
-                mouseEnter: function() {
-                    var title = this.get('parentView.content.due');
-                    this.$().tooltip({ title: title.toString(), placement: 'right',
-                        trigger: 'manual' });
-                    this.$().tooltip('show');
-                    return true;
-                },
-                mouseLeave: function() {
-                    this.$().tooltip('hide');
-                },
-                hasDueDate: function() {
-                    return typeof this.get('parentView.content.due') !== 'undefined';
-                }.property()
-            }),
-
-            tags: function() {
-                return this.get('content').get('tags').map(function(entry) {
-                    return { name: entry };
-                });
-            }.property('content.tags'),
-
-            translate: function(name, value) {
-                if (typeof value !== 'undefined') {
-                    console.log('Value', value);
-                    var todo = todoFromString(value);
-                    var content = this.get('content');
-                    console.log('title', todo.title, todo.tags);
-                    content.set('title', todo.title);
-                    content.set('tags', todo.tags);
-                    console.log('set content');
-                } else {
-                    var tag_portion = this.get('content.tags').map(function(entry) {
-                        return ':' + entry;
-                    }).join(' ');
-
-                    var datePortion = this.get('content.due');
-                    if (datePortion) {
-                        datePortion = '@' + [datePortion.getMonth(), datePortion.getDay()].join('/') + '|' + [datePortion.getHours(), datePortion.getMinutes()].join(':');
-                    }
-
-                    return [this.get('content').get('title'), tag_portion, datePortion].join(' ');
-                }
-            }.property('content'),
-
-            onFinish: function(a) {
-                if (! this.get('editing')) {
-
-                    console.log(this.get('content').get('title'));
-                    if (this.get('content').get('title') === '') {
-                        var controller = this.get('controller');
-                        App.entriesController.remove(this.get('content'));
-                    }
-                }
-            }.observes('editing'),
-
-            classNameBindings: ['content.completed:completed'],
-            templateName: 'todosTemplate',
-
-            EditorView: Ember.TextField.extend({
-    //             value: function(name, value) {
-    //                 if (value) {
-    //                     return value;
-    //                 }
-    //             }.property('content.title'),
-                update: function() {
-                    this.get('content').set('editing', false);
-                },
-                insertNewline: function() {
-                    console.log('whaa');
-                    this.update();
-                },
-                focusOut: function() {
-                    this.update();
-                }
-            })
-        })
+    TodosController = TodosController.reopenClass({
+        contentBinding: 'App.entriesController'
     });
 
-    App.TodosView = TodosView;
-
-    function todoFromString(value) {
-        var title = [], tags = [], due;
-
-        value.split(' ').forEach(function(word) {
-            if (word[0] === ':') {
-                tags.pushObject(word.slice(1));
-            } else if (word[0] === '@') {
-                word = word.slice(1);
-                var date, time;
-
-                if (word.indexOf('|') !== -1) {
-                    var tokens = word.split('|');
-                    date = tokens[0];
-                    time = tokens[1];
-                } else {
-                    date = word;
-                }
-
-                var dayMonth = date.split('/').map(function(token) {
-                    return parseInt(token, 10);
-                });
-
-                console.log('dayMonth', dayMonth);
-
-                var hourMinute = time ? time.split(':').map(function(token) {
-                    return parseInt(token, 10);
-                }) : null;
-
-                if (dayMonth.length === 2) {
-                    due = new Date(new Date().getFullYear(), dayMonth[1] - 1, dayMonth[0]);
-
-                    if (due.isPast()) {
-                        due = due.addYears(1);
-                    }
-                } else {
-                    due = new Date(dayMonth);
-                }
-
-                if (hourMinute) {
-                    due = due.set({ hour: hourMinute[0], minute: hourMinute[1] });
-                    console.log(due);
-                }
-            } else {
-                title.pushObject(word);
-            }
-        });
-
-        var currentTag = App.get('router.currentTag');
-        if (currentTag && tags.indexOf(currentTag) === -1) {
-            tags.push(currentTag);
-        }
-
-        return { title: title.join(' '), tags: tags, due: due };
-    }
-
-    App.ApplicationView = ApplicationView;
 
     App.Router = Router;
     return App;
