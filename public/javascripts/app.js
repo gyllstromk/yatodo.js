@@ -1,4 +1,4 @@
-define('app', ['app/views/application', 'app/views/todos', 'app/models'], function(ApplicationView, TodosView, entries) {
+define('app', ['app/views/application', 'app/views/todos', 'app/models', 'app/controllers/entries'], function(ApplicationView, TodosView, models, entries) {
     var TodosController = Ember.ArrayController.extend({
     //     sortProperties: ['created'],
     //     sortAscending: false
@@ -10,6 +10,7 @@ define('app', ['app/views/application', 'app/views/todos', 'app/models'], functi
         TodosView: TodosView,
         TodosController: TodosController,
         todosController: TodosController.create(),
+        Todo: models.Todo,
         entriesController: entries,
         rootElement: '#appapp',
         ready: function() {
@@ -108,6 +109,7 @@ define('app', ['app/views/application', 'app/views/todos', 'app/models'], functi
             })
         })
     });
+
     TodosController = TodosController.reopenClass({
         contentBinding: 'App.entriesController'
     });
