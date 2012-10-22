@@ -23,7 +23,7 @@ define('app/models', function() {
         due: DS.attr('date'),
 
         didCreate: function() {
-            App.entriesController.set('dirty', true);
+//             App.entriesController.set('dirty', true);
             console.log('Created!');
         }
     });
