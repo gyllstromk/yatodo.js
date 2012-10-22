@@ -1,4 +1,4 @@
-define('app', ['app/views/application', 'app/views/todos'], function(ApplicationView, TodosView) {
+define('app', ['app/views/application', 'app/views/todos', 'app/models'], function(ApplicationView, TodosView, entries) {
     var TodosController = Ember.ArrayController.extend({
     //     sortProperties: ['created'],
     //     sortAscending: false
@@ -10,6 +10,7 @@ define('app', ['app/views/application', 'app/views/todos'], function(Application
         TodosView: TodosView,
         TodosController: TodosController,
         todosController: TodosController.create(),
+        entriesController: entries,
         rootElement: '#appapp',
         ready: function() {
             this.initialize();
@@ -107,86 +108,6 @@ define('app', ['app/views/application', 'app/views/todos'], function(Application
             })
         })
     });
-
-
-    var store = DS.Store.create({
-        revision: 4,
-        adapter: DS.RESTAdapter.create({})
-    });
-
-
-    DS.attr.transforms.array = {
-        from: function(serialized) {
-            return serialized;
-        },
-        to: function(serialized) {
-            return serialized;
-        }
-    };
-
-    App.Todo = DS.Model.extend({
-        primaryKey: '_id',
-        title: DS.attr('string'),
-        tags: DS.attr('array'),
-        completed: DS.attr('boolean'),
-        created: DS.attr('date'),
-        due: DS.attr('date'),
-
-        didCreate: function() {
-            App.entriesController.set('dirty', true);
-            console.log('Created!');
-        }
-    });
-
-    var EntriesController = Ember.ArrayController.extend({
-        Todo: App.Todo,
-        active: false,
-        tags: null,
-
-        page: 0,
-        dirty: false,
-
-    //     sortProperties: ['created'],
-    //     sortAscending: false,
-
-        content: function() {
-            console.log('here');
-            var query = {};
-            if (this.get('active')) {
-                query.completed = false;
-            }
-
-            if (this.get('tags')) {
-                query.tags = this.get('tags');
-            }
-
-            var defaultQuery = { page: this.get('page'), page_size: 40 };
-
-            query = Object.merge(defaultQuery, query);
-
-            var result = store.findQuery(this.get('Todo'), query);
-            this.set('dirty', false);
-            return result;
-        }.property('page', 'tags', 'active', 'dirty'),
-
-        replaceContent: function(idx, amt, objects) {
-            var that = this;
-            objects.forEach(function(entry) {
-                console.log('envtry', entry);
-                store.createRecord(that.get('Todo'), entry);
-            });
-
-            store.commit();
-        },
-
-        remove: function(todo) {
-            todo.deleteRecord();
-            store.commit();
-            this.set('dirty', true);
-        }
-    });
-
-    App.entriesController = EntriesController.create();
     TodosController = TodosController.reopenClass({
         contentBinding: 'App.entriesController'
     });
