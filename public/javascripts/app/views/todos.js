@@ -74,7 +74,7 @@ define('app/views/todos', ['app/views/todoFromString'], function(todoFromString)
                 if (! this.get('editing')) {
 
                     console.log(this.get('content').get('title'));
-                    if (this.get('content').get('title') === '') {
+                    if (this.get('content').get('title').trim() === '') {
                         var controller = this.get('controller');
                         App.entriesController.remove(this.get('content'));
                     }
