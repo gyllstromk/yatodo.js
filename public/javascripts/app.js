@@ -395,7 +395,7 @@ var TodosView = Ember.CollectionView.extend({
             if (! this.get('editing')) {
 
                 console.log(this.get('content').get('title'));
-                if (this.get('content').get('title') === '') {
+                if (this.get('content').get('title').trim() === '') {
                     var controller = this.get('controller');
                     App.entriesController.remove(this.get('content'));
                 }
