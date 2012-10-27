@@ -1,6 +1,6 @@
-define('app/views/application', ['app/views/todoFromString'], function(todoFromString) {
+define('app/views/application', ['app/views/todoFromString', 'text!app/templates/pagination.html', 'text!app/templates/input.html', 'ember', 'ember-data'], function(todoFromString, pagination, input) {
     var NavigationBar = Ember.View.extend({
-        templateName: 'navigationbar',
+//         template: Ember.Handlebars.compile(todos),
 
         LinksView: Ember.CollectionView.extend({
             tagName: 'ul',
@@ -43,7 +43,7 @@ define('app/views/application', ['app/views/todoFromString'], function(todoFromS
                             router.send('showTodos');
                             break;
                         default:
-                            App.entriesController.set('tags', this.get('content').split(':')[1]);
+//                             App.entriesController.set('tags', this.get('content').split(':')[1]);
                             break;
                     }
                 },
@@ -53,92 +53,92 @@ define('app/views/application', ['app/views/todoFromString'], function(todoFromS
         })
     });
 
-    var Pagination = Ember.View.extend({
-        classNames: ['pagination'],
-        templateName: 'pagination',
-
-        pages: function() {
-            function makePageNav(pageno, title) {
-                title = title || pageno;
-                return { title: title, page: pageno };
-            }
-
-            var page = 0; // App.router.get('page'); XXX
-            var pages = [];
-            if (page > 0) {
-                pages.add([makePageNav(page - 1, 'Prev'), makePageNav(page - 1)]);
-            }
-
-            pages.add([makePageNav(page + 1), makePageNav(page + 2), makePageNav(page + 1, 'Next')]);
-            console.log(pages);
-            return pages;
-        }.property('App.router.page'),
-
-        NavigationView: Ember.CollectionView.extend({
-            contentBinding: 'view.pages',
-            tagName: 'ul',
-            itemViewClass: Ember.View.extend({
-                click: function(event) {
-                    var context = { page: this.get('content.page') };
-//                     if (App.router.get('currentState.parentState.parentState.name') === 'tags') {
-//                         var components = App.router.get('location.lastSetURL').split('/');
-//                         components.pop();
-//                         var tag = components.pop();
-//                         context.tag = tag;
-//                     }
-
-                    console.log('context', context);
-//                     App.router.send('showPage', context);
-                },
-                template: Ember.Handlebars.compile('<a>{{ view.content.title }}</a>')
-            })
-        })
-    });
+//     var Pagination = Ember.View.extend({
+//         classNames: ['pagination'],
+//         template: Ember.Handlebars.compile(pagination),
+// 
+//         pages: function() {
+//             function makePageNav(pageno, title) {
+//                 title = title || pageno;
+//                 return { title: title, page: pageno };
+//             }
+// 
+//             var page = 0; // App.router.get('page'); XXX
+//             var pages = [];
+//             if (page > 0) {
+//                 pages.add([makePageNav(page - 1, 'Prev'), makePageNav(page - 1)]);
+//             }
+// 
+//             pages.add([makePageNav(page + 1), makePageNav(page + 2), makePageNav(page + 1, 'Next')]);
+//             console.log(pages);
+//             return pages;
+//         }.property('App.router.page'),
+// 
+//         NavigationView: Ember.CollectionView.extend({
+//             contentBinding: 'view.pages',
+//             tagName: 'ul',
+//             itemViewClass: Ember.View.extend({
+//                 click: function(event) {
+//                     var context = { page: this.get('content.page') };
+// //                     if (App.router.get('currentState.parentState.parentState.name') === 'tags') {
+// //                         var components = App.router.get('location.lastSetURL').split('/');
+// //                         components.pop();
+// //                         var tag = components.pop();
+// //                         context.tag = tag;
+// //                     }
+// 
+//                     console.log('context', context);
+// //                     App.router.send('showPage', context);
+//                 },
+//                 template: Ember.Handlebars.compile('<a>{{ view.content.title }}</a>')
+//             })
+//         })
+//     });
 
     return Ember.ContainerView.extend({
-        childViews: [ 'navbarView', 'inputView', 'mainView', 'paginationView' ],
+        childViews: [ 'mainView' ],
 
-        navbarView: NavigationBar.create(),
-        paginationView: Pagination.create(),
+//         navbarView: NavigationBar.create(),
+//         paginationView: Pagination.create(),
 
-        inputView: Ember.View.create({
-            childViews: ['TitleView', 'ActiveFilterView'],
-            templateName: 'input',
-
-            TitleView: Ember.TextField.extend({
-                todosBinding: 'controller.namespace.todos',
-                insertNewline: function() {
-                    var value = this.get('value');
-                    if (value) {
-                        this.get('controller.namespace.entriesController').pushObject(todoFromString(value));
-                        this.set('value', '');
-                    }
-                }
-            }),
-
-            TagFilterView: Ember.View.extend({
-                contentBinding: 'App.entriesController.tags',
-                tagName: 'span',
-                isVisible: function() {
-                    return this.get('content') !== null;
-                }.property('content'),
-
-                template: Ember.Handlebars.compile('Tags: <span class="label">{{ view.content }}</span>'),
-                click: function(event) {
-//                     App.entriesController.set('tags', null); XXX
-                }
-            }),
-
-    //         submit: Ember.View.create({
-    //             tagName: 'button',
-    //             classNames: ['btn btn-primary'],
-    //             template: Ember.Handlebars.compile('Add')
-    //         }),
-
-            ActiveFilterView: Ember.Checkbox.extend({
-                 checkedBinding: 'App.entriesController.active'
-            }),
-        }),
+//         inputView: Ember.View.create({
+//             childViews: ['TitleView', 'ActiveFilterView'],
+//             template: Ember.Handlebars.compile(input),
+// 
+//             TitleView: Ember.TextField.extend({
+//                 todosBinding: 'controller.namespace.todos',
+//                 insertNewline: function() {
+//                     var value = this.get('value');
+//                     if (value) {
+//                         this.get('controller.namespace.entriesController').pushObject(todoFromString(value));
+//                         this.set('value', '');
+//                     }
+//                 }
+//             }),
+// 
+//             TagFilterView: Ember.View.extend({
+//                 contentBinding: 'App.entriesController.tags',
+//                 tagName: 'span',
+//                 isVisible: function() {
+//                     return this.get('content') !== null;
+//                 }.property('content'),
+// 
+//                 template: Ember.Handlebars.compile('Tags: <span class="label">{{ view.content }}</span>'),
+//                 click: function(event) {
+// //                     App.entriesController.set('tags', null); XXX
+//                 }
+//             }),
+// 
+//     //         submit: Ember.View.create({
+//     //             tagName: 'button',
+//     //             classNames: ['btn btn-primary'],
+//     //             template: Ember.Handlebars.compile('Add')
+//     //         }),
+// 
+//             ActiveFilterView: Ember.Checkbox.extend({
+//                  checkedBinding: 'App.entriesController.active'
+//             }),
+//         }),
 
         mainView: Ember.View.create({
             template: Ember.Handlebars.compile('{{outlet}}')

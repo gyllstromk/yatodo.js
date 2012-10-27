@@ -1,4 +1,4 @@
-define('app/router', function() {
+define('app/router', ['ember', 'ember-data'], function() {
     var makePageRoute = function(prefix) {
         if (! prefix) {
             prefix = '';

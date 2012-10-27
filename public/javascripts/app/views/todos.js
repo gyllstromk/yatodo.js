@@ -1,11 +1,9 @@
-define('app/views/todos', ['app/views/todoFromString'], function(todoFromString) {
+define('app/views/todos', ['app/views/todoFromString', 'text!app/templates/todos.html', 'ember', 'ember-data'], function(todoFromString, todos) {
     return Ember.CollectionView.extend({
         contentBinding: 'controller.content',
         tagName: 'ul',
 
         change: function(evt) {
-            console.log('www', this.get('content'));
-            console.log(evt);
 //             App.store.commit(); XXX
         },
 
@@ -19,7 +17,7 @@ define('app/views/todos', ['app/views/todoFromString'], function(todoFromString)
                 classNames: ['label'],
                 template: Ember.Handlebars.compile('{{ tag.name }}'),
                 click: function() {
-                    App.entriesController.set('tags', this.get('content.name'));
+//                     App.entriesController.set('tags', this.get('content.name'));
                 }
             }),
 
@@ -82,7 +80,7 @@ define('app/views/todos', ['app/views/todoFromString'], function(todoFromString)
             }.observes('editing'),
 
             classNameBindings: ['content.completed:completed'],
-            templateName: 'todosTemplate',
+            template: Ember.Handlebars.compile(todos),
 
             EditorView: Ember.TextField.extend({
     //             value: function(name, value) {

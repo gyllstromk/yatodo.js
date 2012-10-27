@@ -1,4 +1,4 @@
-define('app/models', function() {
+define('app/models', ['ember', 'ember-data'], function() {
     var store = DS.Store.create({
         revision: 4,
         adapter: DS.RESTAdapter.create({})

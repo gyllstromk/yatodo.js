@@ -1,4 +1,4 @@
-define('app/controllers/entries', ['app/models'], function(models) {
+define('app/controllers/entries', ['app/models', 'ember', 'ember-data'], function(models) {
     var EntriesController = Ember.ArrayController.extend({
         Todo: models.Todo,
         active: false,
@@ -9,6 +9,11 @@ define('app/controllers/entries', ['app/models'], function(models) {
 
     //     sortProperties: ['created'],
     //     sortAscending: false,
+
+        init: function() {
+            console.log('sssup');
+            this._super();
+        },
 
         content: function() {
             console.log('here');
@@ -21,7 +26,7 @@ define('app/controllers/entries', ['app/models'], function(models) {
                 query.tags = this.get('tags');
             }
 
-            var defaultQuery = { page: this.get('page'), page_size: 40 };
+            var defaultQuery = { page: this.get('page'), page_size: 1 };
 
             query = Object.merge(defaultQuery, query);
 
