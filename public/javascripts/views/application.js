@@ -1,57 +1,56 @@
-define('app/views/application', ['app/views/todoFromString', 'text!app/templates/pagination.html', 'text!app/templates/input.html', 'ember', 'ember-data'], function(todoFromString, pagination, input) {
-    var NavigationBar = Ember.View.extend({
+var NavigationBar = Ember.View.extend({
 //         template: Ember.Handlebars.compile(todos),
 
-        LinksView: Ember.CollectionView.extend({
-            tagName: 'ul',
-            classNames: ['nav'],
-            content: ['all', 'tag:work'],
+    LinksView: Ember.CollectionView.extend({
+        tagName: 'ul',
+        classNames: ['nav'],
+        content: ['all', 'tag:work'],
 
-            itemViewClass: Ember.View.extend({
-                isActive: function() {
-                    var title;
+        itemViewClass: Ember.View.extend({
+            isActive: function() {
+                var title;
 
-                    if (this.get('content') === 'all') {
-                        title = 'todos';
-                    } else if (this.get('content').startsWith('tag')) {
-                        title = 'tags'; // XXX will break
-                    } else {
-                        title = this.get('content');
-                    }
+                if (this.get('content') === 'all') {
+                    title = 'todos';
+                } else if (this.get('content').startsWith('tag')) {
+                    title = 'tags'; // XXX will break
+                } else {
+                    title = this.get('content');
+                }
 
 //                     console.log('title', title, App.router.get('currentState.parentState.parentState.name'));
 
-                    return false;
+                return false;
 //                     return App.router.get('currentState.parentState.parentState.name') === title;
-                }.property('App.router.currentState'),
+            }.property('App.router.currentState'),
 
-                classNameBindings: ['isActive:active'],
-                title: function() {
-                    var title = this.get('content');
-                    if (title.indexOf(':') !== -1) {
-                        title = title.split(':')[1];
-                    }
+            classNameBindings: ['isActive:active'],
+            title: function() {
+                var title = this.get('content');
+                if (title.indexOf(':') !== -1) {
+                    title = title.split(':')[1];
+                }
 
-                    return title[0].toUpperCase() + title.slice(1);
-                }.property('content'),
+                return title[0].toUpperCase() + title.slice(1);
+            }.property('content'),
 
-                click: function() {
-                    var router = App.router;
+            click: function() {
+                var router = App.router;
 
-                    switch (this.get('content')) {
-                        case 'all':
-                            router.send('showTodos');
-                            break;
-                        default:
+                switch (this.get('content')) {
+                    case 'all':
+                        router.send('showTodos');
+                        break;
+                    default:
 //                             App.entriesController.set('tags', this.get('content').split(':')[1]);
-                            break;
-                    }
-                },
+                        break;
+                }
+            },
 
-                template: Ember.Handlebars.compile('<a>{{ view.title }}</a>')
-            })
+            template: Ember.Handlebars.compile('<a>{{ view.title }}</a>')
         })
-    });
+    })
+});
 
 //     var Pagination = Ember.View.extend({
 //         classNames: ['pagination'],
@@ -95,8 +94,8 @@ define('app/views/application', ['app/views/todoFromString', 'text!app/templates
 //         })
 //     });
 
-    return Ember.ContainerView.extend({
-        childViews: [ 'mainView' ],
+var ApplicationView = Ember.ContainerView.extend({
+    childViews: [ 'mainView' ],
 
 //         navbarView: NavigationBar.create(),
 //         paginationView: Pagination.create(),
@@ -140,8 +139,7 @@ define('app/views/application', ['app/views/todoFromString', 'text!app/templates
 //             }),
 //         }),
 
-        mainView: Ember.View.create({
-            template: Ember.Handlebars.compile('{{outlet}}')
-        })
-    });
+    mainView: Ember.View.create({
+        template: Ember.Handlebars.compile('{{outlet}}')
+    })
 });
