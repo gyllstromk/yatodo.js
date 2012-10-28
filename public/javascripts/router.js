@@ -26,12 +26,13 @@ var makePageRoute = function(prefix) {
                 route: prefix + '/:page',
                 connectOutlets: function(router, context) {
                     console.log('CNTXT', context);
-                    var controller = router.get('namespace.entriesController');
-                    console.log('CONTROLLER', controller);
-                    controller.set('page', (context && context.page) || 0);
-                    console.log(this);
+//                     var controller = router.get('App.entriesController');
+//                     console.log('CONTROLLER', controller);
+//                     controller.set('page', (context && context.page) || 0);
+//                     console.log(this);
 //                     controller.set('filterBy', App.filterController.get('filter'));
-                    router.get('applicationController').connectOutlet('todos', controller);
+                    console.log(App.entriesController);
+                    router.get('applicationController').connectOutlet('todos', App.entriesController);
                 }
             })
         })

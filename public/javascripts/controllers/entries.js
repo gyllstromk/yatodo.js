@@ -1,5 +1,4 @@
 var EntriesController = Ember.ArrayController.extend({
-    Todo: Todo,
     active: false,
     tags: null,
 
@@ -11,44 +10,56 @@ var EntriesController = Ember.ArrayController.extend({
 
     init: function() {
         console.log('sssup');
+//         this.set('content', [ { title: 'sup' } ]);
+//         this.set('content', App.store.findAll(App.Todo));
+//         this.get('content').forEach(function(each) {
+//             console.log('eeee', each);
+//         });
         this._super();
     },
 
     content: function() {
-        console.log('here');
-        var query = {};
-        if (this.get('active')) {
-            query.completed = false;
-        }
+        return App.store.findQuery(App.Todo, { page: 0 });
+    }.property(),
 
-        if (this.get('tags')) {
-            query.tags = this.get('tags');
-        }
-
-        var defaultQuery = { page: this.get('page'), page_size: 40 };
-
-        query = Object.merge(defaultQuery, query);
-
-        var result = store.findQuery(this.get('Todo'), query);
-        this.set('dirty', false);
-        return result;
-    }.property('page', 'tags', 'active', 'dirty'),
+//         console.log('here');
+//         var query = {};
+//         if (this.get('active')) {
+//             query.completed = false;
+//         }
+// 
+//         if (this.get('tags')) {
+//             query.tags = this.get('tags');
+//         }
+// 
+//         var defaultQuery = { page: this.get('page'), page_size: 40 };
+// 
+//         query = Object.merge(defaultQuery, query);
+// 
+//         var result = store.findQuery(this.get('Todo'), query);
+//         this.set('dirty', false);
+//         return result;
+//     }.property('page', 'tags', 'active', 'dirty'),
 
     replaceContent: function(idx, amt, objects) {
         var that = this;
         objects.forEach(function(entry) {
             console.log('envtry', entry);
-            store.createRecord(that.get('Todo'), entry);
+            App.store.createRecord(that.get('Todo'), entry);
         });
 
-        store.commit();
+        App.store.commit();
     },
 
     remove: function(todo) {
         todo.deleteRecord();
-        store.commit();
+        App.store.commit();
         this.set('dirty', true);
     }
 });
 
-var entries = EntriesController.create();
+App.entriesController = EntriesController.create();
+
+TodosController = TodosController.reopenClass({
+    contentBinding: 'App.entriesController'
+});

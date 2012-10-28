@@ -8,7 +8,7 @@ module.exports = function(app) {
         for (var key in req.query) {
             if (req.query[key] === 'true') {
                 req.query[key] = true;
-            } if (req.query[key] === 'false') {
+            } else if (req.query[key] === 'false') {
                 req.query[key] = false;
             }
         }

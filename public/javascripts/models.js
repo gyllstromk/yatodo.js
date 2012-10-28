@@ -1,7 +1,3 @@
-var store = DS.Store.create({
-    revision: 7,
-    adapter: DS.RESTAdapter.create({})
-});
 // 
 // 
 // DS.attr.transforms.array = {
@@ -13,16 +9,27 @@ var store = DS.Store.create({
 //     }
 // };
 
-var Todo = DS.Model.extend({
-    primaryKey: '_id',
+App.Todo = DS.Model.extend({
     title: DS.attr('string'),
 //     tags: DS.attr('array'),
     completed: DS.attr('boolean'),
 //     created: DS.attr('date'),
 //     due: DS.attr('date'),
 
-    didCreate: function() {
-//             App.entriesController.set('dirty', true);
-        console.log('Created!');
-    }
+//     didCreate: function() {
+// //             App.entriesController.set('dirty', true);
+//         console.log('Created!');
+//     }
+});
+
+DS.RESTAdapter.map('App.Todo', {
+    primaryKey: '_id',
+    title: DS.attr('string'),
+//     tags: DS.attr('array'),
+    completed: DS.attr('boolean'),
+});
+
+App.store = DS.Store.create({
+    revision: 6,
+    adapter: DS.RESTAdapter.create({})
 });

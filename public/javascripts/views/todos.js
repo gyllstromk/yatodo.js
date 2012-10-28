@@ -1,5 +1,5 @@
 var TodosView = Ember.CollectionView.extend({
-    contentBinding: 'controller.content',
+    contentBinding: 'App.entriesController',
     tagName: 'ul',
 
     change: function(evt) {
