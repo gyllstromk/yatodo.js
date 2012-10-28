@@ -25,7 +25,7 @@ var EntriesController = Ember.ArrayController.extend({
             query.tags = this.get('tags');
         }
 
-        var defaultQuery = { page: this.get('page'), page_size: 1 };
+        var defaultQuery = { page: this.get('page'), page_size: 40 };
 
         query = Object.merge(defaultQuery, query);
 
