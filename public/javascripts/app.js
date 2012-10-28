@@ -13,9 +13,9 @@ var App = Em.Application.create({
     Todo: Todo,
     entriesController: entries,
     rootElement: '#appapp',
-    ready: function() {
-        this.initialize();
-    }
+//     ready: function() {
+//         this.initialize();
+//     }
 });
 
 TodosController = TodosController.reopenClass({

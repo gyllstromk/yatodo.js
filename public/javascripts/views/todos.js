@@ -39,9 +39,11 @@ var TodosView = Ember.CollectionView.extend({
         }),
 
         tags: function() {
-            return this.get('content').get('tags').map(function(entry) {
-                return { name: entry };
-            });
+            return [];
+//             return [ { name: 'sup' } ];
+//             return this.get('content').get('tags').map(function(entry) {
+//                 return { name: entry };
+//             });
         }.property('content.tags'),
 
         translate: function(name, value) {
