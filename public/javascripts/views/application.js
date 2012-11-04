@@ -124,7 +124,7 @@ var ApplicationView = Ember.ContainerView.extend({
 
             template: Ember.Handlebars.compile('Tags: <span class="label">{{ view.content }}</span>'),
             click: function(event) {
-//                     App.entriesController.set('tags', null); XXX
+                App.entriesController.set('tags', null);
             }
         }),
 

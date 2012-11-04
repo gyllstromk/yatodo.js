@@ -3,7 +3,7 @@ var TodosView = Ember.CollectionView.extend({
     tagName: 'ul',
 
     change: function(evt) {
-//             App.store.commit(); XXX
+        App.store.commit(); //XXX
     },
 
     itemViewClass: Ember.View.extend({
@@ -16,7 +16,7 @@ var TodosView = Ember.CollectionView.extend({
             classNames: ['label'],
             template: Ember.Handlebars.compile('{{ tag.name }}'),
             click: function() {
-//                     App.entriesController.set('tags', this.get('content.name'));
+                App.entriesController.set('tags', this.get('content.name'));
             }
         }),
 
@@ -39,11 +39,9 @@ var TodosView = Ember.CollectionView.extend({
         }),
 
         tags: function() {
-            return [];
-//             return [ { name: 'sup' } ];
-//             return this.get('content').get('tags').map(function(entry) {
-//                 return { name: entry };
-//             });
+            return (this.get('content').get('tags') || []).map(function(entry) {
+                return { name: entry };
+            });
         }.property('content.tags'),
 
         translate: function(name, value) {
@@ -56,7 +54,7 @@ var TodosView = Ember.CollectionView.extend({
                 content.set('tags', todo.tags);
                 console.log('set content');
             } else {
-                var tag_portion = this.get('content.tags').map(function(entry) {
+                var tag_portion = (this.get('content.tags') || []).map(function(entry) {
                     return ':' + entry;
                 }).join(' ');
 
