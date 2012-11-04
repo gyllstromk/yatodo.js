@@ -23,7 +23,18 @@ var EntriesController = Ember.ArrayController.extend({
             query.completed = false;
         }
 
-        this.set('content', App.store.find(App.Todo, query));
+        this.set('content', App.store.filter(App.Todo, function(each) {
+            if (query.hasOwnProperty('completed') && each.get('completed')) {
+                return false;
+            }
+
+            if (query.tags && each.get('tags').intersect(query.tags).length === 0) {
+                return false;
+            }
+
+            return true;
+        }));
+//         this.set('content', App.store.filter(query));
     }.observes('tags', 'active'),
 
 //     arrangedContent: function() {

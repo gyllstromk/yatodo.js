@@ -70,7 +70,6 @@ var NavigationBar = Ember.View.extend({
             }
 
             pages.add([makePageNav(page + 1), makePageNav(page + 2), makePageNav(page + 1, 'Next')]);
-            console.log(pages);
             return pages;
         }.property('App.router.page'),
 
