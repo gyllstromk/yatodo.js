@@ -86,7 +86,8 @@ var NavigationBar = Ember.View.extend({
 //                         context.tag = tag;
 //                     }
 
-                    console.log('context', context);
+                    this.set('controller.namespace.entriesController.page', context.page);
+//                     console.log('context', context);
 //                     App.router.send('showPage', context);
                 },
                 template: Ember.Handlebars.compile('<a>{{ view.content.title }}</a>')

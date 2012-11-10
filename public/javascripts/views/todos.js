@@ -46,13 +46,8 @@ var TodosView = Ember.CollectionView.extend({
 
         translate: function(name, value) {
             if (typeof value !== 'undefined') {
-                console.log('Value', value);
                 var todo = todoFromString(value);
-                var content = this.get('content');
-                console.log('title', todo.title, todo.tags);
-                content.set('title', todo.title);
-                content.set('tags', todo.tags);
-                console.log('set content');
+                this.set('content.title', todo.title);
             } else {
                 var tag_portion = (this.get('content.tags') || []).map(function(entry) {
                     return ':' + entry;
@@ -69,8 +64,7 @@ var TodosView = Ember.CollectionView.extend({
 
         onFinish: function(a) {
             if (! this.get('editing')) {
-
-                console.log(this.get('content').get('title'));
+                console.log('title', this.get('content').get('title'));
                 if (this.get('content').get('title').trim() === '') {
                     var controller = this.get('controller');
                     App.entriesController.remove(this.get('content'));
@@ -82,16 +76,10 @@ var TodosView = Ember.CollectionView.extend({
         templateName: 'todos',
 
         EditorView: Ember.TextField.extend({
-//             value: function(name, value) {
-//                 if (value) {
-//                     return value;
-//                 }
-//             }.property('content.title'),
             update: function() {
                 this.get('content').set('editing', false);
             },
             insertNewline: function() {
-                console.log('whaa');
                 this.update();
             },
             focusOut: function() {

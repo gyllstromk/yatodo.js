@@ -23,7 +23,7 @@ module.exports = function(app) {
             connection.collection('todos', function(err, collection) {
                 var cursor = collection.find(req.query);
                 cursor.sort({ created: -1 });
-                cursor.skip(page_size * page).limit(page_size);
+//                 cursor.skip(page_size * page).limit(page_size);
                 cursor.toArray(function(err, results) {
                     connection.close();
                     res.json({ todos: results });
