@@ -22,6 +22,7 @@ module.exports = function(app) {
         require('mongodb').connect(url, function(err, connection) {
             connection.collection('todos', function(err, collection) {
                 var cursor = collection.find(req.query);
+//                 cursor.sort({ _id: -1 });
                 cursor.sort({ created: -1 });
 //                 cursor.skip(page_size * page).limit(page_size);
                 cursor.toArray(function(err, results) {
@@ -52,9 +53,12 @@ module.exports = function(app) {
             }
 
             if (! todo.created) {
-                todo.created = new Date();
-                console.log(todo.created);
+                todo.created = Date.create();
+            } else {
+                todo.created = Date.create(todo.created);
             }
+
+            console.log(todo.created);
 
         //     todo.forEach(function(td) {
         //         if (td.id) {

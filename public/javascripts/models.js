@@ -8,13 +8,15 @@ App.Todo = DS.Model.extend({
 
     didLoad: function() {
         // XXX hack to load
-        App.entriesController.onLoaded();
+        App.entriesController.onLoaded(this);
     },
 
     didCreate: function() {
         // XXX hack to load
+        console.log('created', this.get('created'));
+//         App.store.load(this);
+        App.entriesController.get('entries').insertAt(0, this);
         App.entriesController.set('dirty', true);
-//         App.entriesController.set('loaded', true);
     }
 });
 
@@ -35,6 +37,7 @@ DS.RESTAdapter.registerTransform('date', {
     fromJSON: function(serialized) {
         return serialized;
     },
+
     toJSON: function(serialized) {
         return serialized;
     }
