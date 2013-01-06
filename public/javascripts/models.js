@@ -35,6 +35,9 @@ DS.RESTAdapter.registerTransform('array', {
 
 DS.RESTAdapter.registerTransform('date', {
     fromJSON: function(serialized) {
+        if (serialized) {
+            return Date.create(serialized);
+        }
         return serialized;
     },
 

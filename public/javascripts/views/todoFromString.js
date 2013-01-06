@@ -33,7 +33,7 @@ function todoFromString(value) {
                     due = due.addYears(1);
                 }
             } else {
-                due = new Date(dayMonth);
+                due = Date.create(dayMonth);
             }
 
             if (hourMinute) {

@@ -1,7 +1,7 @@
 var EntriesController = Ember.ArrayController.extend({
     tags: null,
-    active: false,
-    page: null,
+    all: false,
+    page: 0,
     loaded: false,
     entries: Ember.A(),
 
@@ -27,36 +27,41 @@ var EntriesController = Ember.ArrayController.extend({
     onLoaded: function(item) {
         var entries = this.get('entries');
         entries.pushObject(item);
-        if (entries.length === this.get('pageSize')) {
+        if (entries.length === this.get('pageSize') * 3) {
             this.set('dirty', true);
         }
     },
 
     _filtered: function() {
-        console.log('sdfs2111');
         var query = {};
 
         if (this.get('tags')) {
             query.tags = this.get('tags');
         }
 
-        if (this.get('active')) {
-            query.completed = false;
+        if (this.get('all')) {
+            query.all = true;
         }
 
         var entries = this.get('entries');
         var content = [];
+        var seen = 0;
 
         for (var i = 0; content.length < this.get('pageSize') && i < entries.length; i++) {
             var each = entries[i];
 
-            console.log('each', each.get('title'));
-            if (query.hasOwnProperty('completed') && each.get('completed')) {
+            if (! query.hasOwnProperty('all') && each.get('completed')) {
                 continue;
             }
 
             if (query.tags && (each.get('tags') || []).intersect(query.tags).length === 0) {
                 continue
+            }
+
+            seen += 1;
+
+            if (seen < this.get('page') * this.get('pageSize')) {
+                continue;
             }
 
             content.push(each);
@@ -66,7 +71,7 @@ var EntriesController = Ember.ArrayController.extend({
 //         });
 
         return content;
-    }.property('entries', 'loaded', 'tags', 'active'),
+    }.property('page', 'entries', 'loaded', 'tags', 'all'),
 
     content: function() {
         var content = this.get('_filtered');
@@ -75,7 +80,6 @@ var EntriesController = Ember.ArrayController.extend({
         }
 
         content = content.toArray().sortBy('created', true);
-        console.log('content', content.slice(0, 20));
 
         return content.slice(0, this.get('pageSize'));
     }.property('_filtered'),

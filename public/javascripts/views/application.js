@@ -134,8 +134,11 @@ var ApplicationView = Ember.ContainerView.extend({
 //             template: Ember.Handlebars.compile('Add')
 //         }),
 
-        ActiveFilterView: Ember.Checkbox.extend({
-             checkedBinding: 'App.entriesController.active'
+        ActiveFilterView: Ember.View.extend({
+            defaultTemplate: Ember.Handlebars.compile('Show all: {{view view.IsActiveView}}'),
+            IsActiveView: Ember.Checkbox.extend({
+                checkedBinding: 'App.entriesController.all'
+            }),
         }),
     }),
 
