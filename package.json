@@ -9,5 +9,10 @@
     "express": "3.0.0rc3",
     "jade": "*",
     "easymongo": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.3.17",
+    "grunt-emberify": "~0.1.8",
+    "grunt-bowerful": "~0.1.2"
   }
 }
