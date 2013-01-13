@@ -7,11 +7,11 @@ var EntriesController = Ember.ArrayController.extend({
 
     sortProperties: ['created'],
     sortAscending: false,
-    pageSize: 20,
+    pageSize: 50,
     loadCount: 0,
 
     init: function() {
-        this._super();
+//         this._super();
         App.store.find(App.Todo);
     },
 
@@ -47,31 +47,22 @@ var EntriesController = Ember.ArrayController.extend({
         var content = [];
         var seen = 0;
 
-        for (var i = 0; content.length < this.get('pageSize') && i < entries.length; i++) {
-            var each = entries[i];
-
+        return entries.filter(function(each) {
             if (! query.hasOwnProperty('all') && each.get('completed')) {
-                continue;
+                return false;
             }
 
             if (query.tags && (each.get('tags') || []).intersect(query.tags).length === 0) {
-                continue
+                return false;
             }
 
-            seen += 1;
-
-            if (seen < this.get('page') * this.get('pageSize')) {
-                continue;
-            }
-
-            content.push(each);
-        }
+            return each;
+        });
 
 //         var content = App.store.filter(App.Todo, function(each) {
 //         });
 
-        return content;
-    }.property('page', 'entries', 'loaded', 'tags', 'all'),
+    }.property('entries', 'loaded', 'tags', 'all'),
 
     content: function() {
         var content = this.get('_filtered');

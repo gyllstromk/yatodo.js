@@ -38,13 +38,8 @@ var NavigationBar = Ember.View.extend({
             click: function() {
                 var router = App.router;
 
-                switch (this.get('content')) {
-                    case 'all':
-                        router.send('showTodos');
-                        break;
-                    default:
-//                             App.entriesController.set('tags', this.get('content').split(':')[1]);
-                        break;
+                if (this.get('content') === 'all') {
+                    router.send('showTodos');
                 }
             },
 
@@ -58,25 +53,46 @@ var NavigationBar = Ember.View.extend({
         templateName: 'pagination',
 
         pages: function() {
-            function makePageNav(pageno, title) {
+            function makePageNav(pageno, title, disabled) {
                 title = title || pageno;
-                return { title: title, page: pageno };
+                return { title: title, page: pageno, disabled: disabled };
             }
+            
+            var page = this.get('controller.namespace.entriesController.page');
+            var pageSize = this.get('controller.namespace.entriesController.pageSize');
+            var numEntries = this.get('controller.namespace.entriesController._filtered.length');
 
-            var page = 0; // App.router.get('page'); XXX
+            console.log('page', page);
             var pages = [];
             if (page > 0) {
-                pages.add([makePageNav(page - 1, 'Prev'), makePageNav(page - 1)]);
+                pages.add([makePageNav(page - 1, '«'), makePageNav(page - 1)]);
             }
 
-            pages.add([makePageNav(page + 1), makePageNav(page + 2), makePageNav(page + 1, 'Next')]);
+            pages.add(makePageNav(page, undefined, true));
+            console.log('page', page, pageSize, numEntries);
+
+            if ((page + 1) * pageSize < numEntries) {
+                pages.add(makePageNav(page + 1));
+                if ((page + 2) * pageSize < numEntries) {
+                    pages.add(makePageNav(page + 2));
+                }
+
+               pages.add(makePageNav(page + 1, '»'));
+            }
+
+            console.log(pages);
             return pages;
-        }.property('App.router.page'),
+        }.property('controller.namespace.entriesController.page'),
 
         NavigationView: Ember.CollectionView.extend({
             contentBinding: 'view.pages',
             tagName: 'ul',
             itemViewClass: Ember.View.extend({
+                classNameBindings: [ 'disabled' ],
+                disabled: function() {
+                    return this.get('content.disabled');
+                }.property(),
+
                 click: function(event) {
                     var context = { page: this.get('content.page') };
 //                     if (App.router.get('currentState.parentState.parentState.name') === 'tags') {
@@ -138,8 +154,8 @@ var ApplicationView = Ember.ContainerView.extend({
             defaultTemplate: Ember.Handlebars.compile('Show all: {{view view.IsActiveView}}'),
             IsActiveView: Ember.Checkbox.extend({
                 checkedBinding: 'App.entriesController.all'
-            }),
-        }),
+            })
+        })
     }),
 
     mainView: Ember.View.create({

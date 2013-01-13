@@ -19,7 +19,7 @@ module.exports = function(grunt) {
                 src: [ 
                        'components/handlebars/handlebars-1.0.0-rc.1.js',
                        'components/ember/ember.js',
-                       'public/assets/js/libs/ember-data.js',
+                       'client/assets/ember-data.js',
                        'public/application.js',
                        'client/lib/views/todoFromString.js',
                        'client/lib/views/todos.js',
