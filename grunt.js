@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             dest: 'public',
             packages: {
                 sugar: '',
-                jquery: '~1.3.8',
+                jquery: '~1.8.3',
                 bootstrap: '~2.2.1'
             }
         },
