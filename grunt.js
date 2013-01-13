@@ -4,38 +4,34 @@ module.exports = function(grunt) {
             'public/application.js': [ 'client/lib/templates/*.handlebars' ]
         },
 
-        bowerful: {
-            store: 'components',
-            dest: 'public',
-            packages: {
-                sugar: '',
-                jquery: '~1.3.8',
-                bootstrap: '~2.2.1'
-            }
-        },
-
         concat: {
             dist: {
                 src: [ 
+                       'components/jquery/jquery.js',
                        'components/handlebars/handlebars-1.0.0-rc.1.js',
-                       'components/ember/ember.js',
-                       'client/assets/ember-data.js',
+                       'vendor/ember.js/dist/ember.js',
+                       'vendor/data/dist/ember-data.js',
                        'public/application.js',
-                       'client/lib/views/todoFromString.js',
-                       'client/lib/views/todos.js',
-                       'client/lib/views/application.js',
-                       'client/lib/router.js',
                        'client/lib/app.js',
-                       'client/lib/models.js',
-                       'client/lib/controllers/entries.js',
+                       'client/lib/router.js',
+                       'client/lib/models/**.js',
+                       'client/lib/controllers/**.js',
                 ],
                 dest: 'public/application.js'
             }
         },
 
+        copy: {
+            dist: {
+                files: {
+                    'public/': [ 'client/static/*' ]
+                }
+            }
+        },
+
         watch: {
             scripts: {
-                files: [ '<config:concat.dist.src>', 'resources/**js', 'app.js' ],
+                files: [ 'client/lib/**', '<config:concat.dist.src>', 'resources/**js' ],
                 tasks: 'handlebars_embed concat server'
             }
         }
@@ -45,8 +41,9 @@ module.exports = function(grunt) {
         require('./app');
     });
 
-    grunt.loadNpmTasks('grunt-bowerful');
+//     grunt.loadNpmTasks('grunt-bowerful');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-emberify');
-    grunt.registerTask('default', 'bowerful handlebars_embed concat');
-    grunt.registerTask('dev', 'bowerful handlebars_embed concat server watch');
+    grunt.registerTask('default', 'handlebars_embed concat copy');
+    grunt.registerTask('dev', 'handlebars_embed concat server watch');
 };

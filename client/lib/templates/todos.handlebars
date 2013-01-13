@@ -1,10 +1,22 @@
-{{#unless view.editing}}
-  {{view Ember.Checkbox checkedBinding="view.content.completed" class="toggle"}}
-  {{view.content.title}}
-  {{#each tag in view.tags}}
-  {{view view.TagView contentBinding="tag"}}
-  {{/each}}
-  {{view view.DueView contentBinding="view.content"}}
-{{else}}
-  {{view view.EditorView contentBinding="view" valueBinding="view.translate"}}
-{{/unless}}
+{{model.completed}}
+
+{{view Ember.Checkbox checkedBinding="model.showAll" class="toggle"}}<br>
+
+{{#if model.tagFilter}}
+<div>
+    Filtering by:
+    <a class="label" {{action "setTagFilter"}}>
+        {{model.tagFilter}}
+    </a>
+</div>
+{{/if}}
+
+{{#each model}}
+    {{title}}
+    {{#each tag in tags}}
+        <a class="label" {{action "setTagFilter" tag}}>
+            {{tag}}
+        </a>
+    {{/each}}
+<br>
+{{/each}}
