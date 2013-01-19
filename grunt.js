@@ -14,6 +14,7 @@ module.exports = function(grunt) {
                        'public/application.js',
                        'client/lib/app.js',
                        'client/lib/router.js',
+                       'client/lib/views/**.js',
                        'client/lib/models/**.js',
                        'client/lib/controllers/**.js',
                 ],
@@ -31,7 +32,7 @@ module.exports = function(grunt) {
 
         watch: {
             scripts: {
-                files: [ 'client/lib/**', '<config:concat.dist.src>', 'resources/**js' ],
+                files: [ 'client/lib/templates/**', '<config:concat.dist.src>', 'resources/**js' ],
                 tasks: 'handlebars_embed concat server'
             }
         }
