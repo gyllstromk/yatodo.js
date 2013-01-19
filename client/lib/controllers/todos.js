@@ -26,11 +26,14 @@
         },
 
         del: function(todo) {
+            var self = this;
             $.ajax({
-                url:         '/todos/' + todo._id,
+                url:         '/todos/' + todo.get('_id'),
                 type:        'DELETE'
             }).success(function(response) {
                 console.log('deleted', response);
+                console.log('trying to delete', todo);
+                self.removeObject(todo);
             }).error(function(err) {
                 console.log('err', err);
             });
@@ -50,7 +53,6 @@
                 processData: false
             }).success(function(response) {
                 console.log('updated', response.todo);
-                console.log(self.get('content'));
             }).error(function(err) {
                 console.log('err', err);
             });
@@ -59,7 +61,6 @@
         pages: function() {
             console.log('here');
             var content = this.get('filteredContent.length');
-            console.log(content);
             var pages = [];
             for (var i = 0; i < content / 20; i++) {
                 pages.add(i);
@@ -83,13 +84,13 @@
             }).success(function(response) {
                 console.log('inserting', response.todo);
                 self.insertAt(0, app.Todo.create(response.todo));
-                console.log(self.get('content'));
             }).error(function(err) {
                 console.log('err', err);
             });
         },
 
         filteredContent: function() {
+            console.log('ee');
             this.set('page', 0);
             var content = this.get('content');
             if (! this.get('showAll')) {
@@ -98,13 +99,14 @@
                 });
             }
             return content;
-        }.property('content', 'showAll'),
+        }.property('content.@each', 'showAll'),
 
         arrangedContent: function() {
+            console.log('grat');
             var page = this.get('page');
             var pageSize = 20;
             return this.get('filteredContent').slice(page * pageSize, (page + 1) * pageSize);
-        }.property('filteredContent', 'page')
+        }.property('filteredContent.@each', 'page')
     });
 
     app.todosController = TodosController.create();
