@@ -9,6 +9,10 @@
             model.tags = this.get('tags');
             return model;
         },
+
+        isCompleted: function() {
+            return this.get('completed');
+        }.property(),
     });
 
 //     DS.RESTAdapter.map('App.Todo', {

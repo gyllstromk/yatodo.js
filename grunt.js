@@ -33,14 +33,14 @@ module.exports = function(grunt) {
         copy: {
             dist: {
                 files: {
-                    'public/': [ 'client/static/*' ]
+                    'public/': [ 'client/static/**' ]
                 }
             }
         },
 
         watch: {
             scripts: {
-                files: [ 'client/lib/templates/**', '<config:concat.dist.src>', 'resources/**js' ],
+                files: [ 'client/**', '<config:concat.dist.src>', 'resources/**js' ],
                 tasks: 'handlebars_embed concat server'
             }
         }

@@ -13,12 +13,12 @@
 
 <button {{action insertNewTodo}}>+</button>
 
-{{#each item in model.content}}
+{{#each item in model.arrangedContent}}
 <div>
     {{#if item.isEditing}}
-        {{view App.TextField  contentBinding="item"}}
+        {{view App.TextField contentBinding="item"}}
     {{else}}
-        <span {{action "sup" item}}>{{item.title}}</span>
+        <span {{bindAttr class="item.isCompleted"}} {{action "sup" item}}>{{item.title}}</span>
         {{#each tag in item.tags}}
             <a class="label" {{action "setTagFilter" tag}}>
                 {{tag}}

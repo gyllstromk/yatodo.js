@@ -6,11 +6,12 @@
     var TodosController = Ember.ArrayController.extend({
         content: [],
         showAll: false,
+        page: 0,
 
         init: function() {
             var self = this;
             $.ajax({
-                url: '/todos?page=0&page_size=10',
+                url: '/todos?page=0&page_size=100',
                 dateType: 'json'
             }).success(function(data) {
                 console.log(data.todos, typeof data.todos);
@@ -29,7 +30,7 @@
 
             $.ajax({
                 url:         '/todos/' + todo._id,
-                type:        'DELETE',
+                type:        'DELETE'
             }).success(function(response) {
                 console.log('deleted', response);
             }).error(function(err) {
@@ -79,16 +80,21 @@
             });
         },
 
-//         arrangedContent: function() {
-//             console.log('heem');
-//             var content = this.get('content');
-//             if (! this.get('showAll')) {
-//                 return content.filter(function(each) {
-//                     return ! each.completed;
-//                 });
-//             }
-//             return content;
-//         }.property('content', 'showAll')
+        filteredContent: function() {
+            var content = this.get('content');
+            if (! this.get('showAll')) {
+                return content.filter(function(each) {
+                    return ! each.completed;
+                });
+            }
+            return content;
+        }.property('content', 'showAll'),
+
+        arrangedContent: function() {
+            var page = this.get('page');
+            var pageSize = 20;
+            return this.get('filteredContent').slice(page * pageSize, (page + 1) * pageSize);
+        }.property('filteredContent')
     });
 
     app.todosController = TodosController.create();

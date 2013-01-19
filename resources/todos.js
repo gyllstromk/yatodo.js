@@ -13,8 +13,12 @@ module.exports = function(app) {
             }
         }
 
-        var page = parseInt(req.query.page, 10) || 0;
-        var page_size = parseInt(req.query.page_size, 10) || 10;
+        var page, page_size;
+
+        if (req.query.page) {
+            page = parseInt(req.query.page, 10) || 0;
+            page_size = parseInt(req.query.page_size, 10) || 10;
+        }
 
         delete req.query.page;
         delete req.query.page_size;
@@ -24,7 +28,9 @@ module.exports = function(app) {
                 var cursor = collection.find(req.query);
 //                 cursor.sort({ _id: -1 });
                 cursor.sort({ created: -1 });
-                cursor.skip(page_size * page).limit(page_size);
+                if (typeof page !== 'undefined') {
+                    cursor.skip(page_size * page).limit(page_size);
+                }
                 cursor.toArray(function(err, results) {
                     connection.close();
                     res.json({ todos: results });
