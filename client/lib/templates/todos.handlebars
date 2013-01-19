@@ -13,12 +13,19 @@
 </div>
 {{/if}}
 
-{{#each model}}
-    {{title}}
-    {{#each tag in tags}}
+<button {{action insertNewTodo}}>+</button>
+
+{{#each item in model.content}}
+<div>
+    {{#if item.isEditing}}
+        {{view App.TextField valueBinding="item.title" contentBinding="item"}}
+    {{else}}
+        <span {{action "sup" item}}>{{item.title}}</span>
+    {{/if}}
+    {{#each tag in item.tags}}
         <a class="label" {{action "setTagFilter" tag}}>
             {{tag}}
         </a>
     {{/each}}
-<br>
+</div>
 {{/each}}

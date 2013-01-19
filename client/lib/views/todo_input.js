@@ -4,20 +4,26 @@
 
     app.TextField = Ember.TextField.extend({
         insertNewline: function() {
-            var todo = {};
+            var todo = this.get('content') || Ember.Object.create();
             var tokens = this.get('value').split(' ');
 
-            todo.tags = tokens.filter(function(each) {
+            todo.set('tags', tokens.filter(function(each) {
                 return each.startsWith('#');
             }).map(function(each) {
                 return each.slice(1);
-            });
+            }));
 
-            todo.title = tokens.filter(function(each) {
+            todo.set('title', tokens.filter(function(each) {
                 return ! each.startsWith('#');
-            }).join(' ');
+            }).join(' '));
 
-            app.todosController.create(todo);
+            if (todo.get('_id')) {
+                app.todosController.update(todo);
+            } else {
+                app.todosController.create(todo);
+            }
+
+            todo.set('isEditing', false);
         }
     });
 })(window.App);

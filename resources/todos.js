@@ -72,7 +72,8 @@ module.exports = function(app) {
     });
 
     app.put('/todos/:id', function(req, res, next) {
-        var todo = req.body.todo;
+        var todo = req.body;
+        console.log('eee', todo);
 
         require('mongodb').connect(url, function(err, connection) {
             console.log(err);
