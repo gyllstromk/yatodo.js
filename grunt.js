@@ -8,6 +8,7 @@ module.exports = function(grunt) {
             dist: {
                 src: [ 
                        'components/jquery/jquery.js',
+                       'components/sugar/release/1.3.7/sugar-1.3.7.min.js',
                        'components/handlebars/handlebars-1.0.0-rc.1.js',
                        'vendor/ember.js/dist/ember.js',
                        'vendor/data/dist/ember-data.js',
