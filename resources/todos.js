@@ -109,7 +109,9 @@ module.exports = function(app) {
 //     });
 
     app.del('/todos/:id', function(req, res, next) {
+        console.log('ee');
         var id = require('mongodb').ObjectID.createFromHexString(req.params.id);
+        console.log('deleting', id);
 
         require('mongodb').connect(url, function(err, connection) {
             connection.collection('todos', function(err, collection) {

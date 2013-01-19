@@ -1,5 +1,3 @@
-{{view App.TextField}}<br>
-
 {{model.completed}}
 
 {{view Ember.Checkbox checkedBinding="model.showAll" class="toggle"}}<br>
@@ -18,14 +16,14 @@
 {{#each item in model.content}}
 <div>
     {{#if item.isEditing}}
-        {{view App.TextField valueBinding="item.title" contentBinding="item"}}
+        {{view App.TextField  contentBinding="item"}}
     {{else}}
         <span {{action "sup" item}}>{{item.title}}</span>
+        {{#each tag in item.tags}}
+            <a class="label" {{action "setTagFilter" tag}}>
+                {{tag}}
+            </a>
+        {{/each}}
     {{/if}}
-    {{#each tag in item.tags}}
-        <a class="label" {{action "setTagFilter" tag}}>
-            {{tag}}
-        </a>
-    {{/each}}
 </div>
 {{/each}}

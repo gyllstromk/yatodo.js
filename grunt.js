@@ -10,17 +10,24 @@ module.exports = function(grunt) {
                        'components/jquery/jquery.js',
                        'components/sugar/release/1.3.7/sugar-1.3.7.min.js',
                        'components/handlebars/handlebars-1.0.0-rc.1.js',
+                       'components/bootstrap/docs/assets/js/bootstrap.js',
                        'vendor/ember.js/dist/ember.js',
                        'vendor/data/dist/ember-data.js',
                        'public/application.js',
                        'client/lib/app.js',
+                       'client/lib/models/**.js',
                        'client/lib/router.js',
                        'client/lib/views/**.js',
-//                        'client/lib/models/**.js',
                        'client/lib/controllers/**.js',
                 ],
                 dest: 'public/application.js'
-            }
+            },
+            css: {
+                src: [
+                    'components/bootstrap/docs/assets/css/bootstrap.css'
+                ],
+                dest: 'public/assets.css'
+            },
         },
 
         copy: {
@@ -47,5 +54,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-emberify');
     grunt.registerTask('default', 'handlebars_embed concat copy');
-    grunt.registerTask('dev', 'handlebars_embed concat server watch');
+    grunt.registerTask('dev', 'handlebars_embed concat copy server watch');
 };

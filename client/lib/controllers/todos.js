@@ -16,26 +16,31 @@
                 console.log(data.todos, typeof data.todos);
                 console.log(Ember.A(data.todos));
                 self.get('content').pushObjects(data.todos.map(function(each) {
-                    console.log('each', Ember.Object.create(each));
-                    return Ember.Object.create(each);
+                    if (! each.title) {
+                        each.title = 'empty';
+                    }
+                    return app.Todo.create(each);
                 }));
             });
         },
 
-        toModel: function(todo) {
-            var toModel = {};
-            toModel.title = todo.get('title');
-            toModel.created = todo.get('created');
-            toModel.completed = todo.get('completed');
-            toModel._id = todo.get('_id');
-            toModel.tags = todo.get('tags');
-            return toModel;
+        del: function(todo) {
+            console.log('deleting', todo.get('_id'));
+
+            $.ajax({
+                url:         '/todos/' + todo._id,
+                type:        'DELETE',
+            }).success(function(response) {
+                console.log('deleted', response);
+            }).error(function(err) {
+                console.log('err', err);
+            });
         },
 
         update: function(todo) {
             var self = this;
             console.log('creating', todo);
-            todo = this.toModel(todo);
+            todo = todo.toModel();
 
             $.ajax({
                 url:         '/todos/' + todo._id,
@@ -62,12 +67,12 @@
                 dataType:    'json',
                 contentType: 'application/json',
                 type:        'POST',
-                data:        JSON.stringify(self.toModel(todo)),
+                data:        JSON.stringify(todo.toModel()),
                 processData: false
 
             }).success(function(response) {
                 console.log('inserting', response.todo);
-                self.insertAt(0, Ember.Object.create(response.todo));
+                self.insertAt(0, app.Todo.create(response.todo));
                 console.log(self.get('content'));
             }).error(function(err) {
                 console.log('err', err);
@@ -97,7 +102,7 @@
             events: {
                 insertNewTodo: function() {
                     console.log('ee');
-                    app.todosController.create(Ember.Object.create({ title: 'New todo' }));
+                    app.todosController.create(app.Todo.create({ title: 'New todo' }));
                 },
 
                 sup: function(todo) {

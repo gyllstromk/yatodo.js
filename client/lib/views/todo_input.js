@@ -3,8 +3,18 @@
     'use strict';
 
     app.TextField = Ember.TextField.extend({
+        focusOut: function() {
+            this.set('content.isEditing', false);
+        },
+
+        value: function() {
+            return this.get('content.title') + ' ' + (this.get('content.tags') || []).map(function(each) {
+                return '#' + each;
+            }).join(' ');
+        }.property('title'),
+
         insertNewline: function() {
-            var todo = this.get('content') || Ember.Object.create();
+            var todo = this.get('content') || app.Todo.create();
             var tokens = this.get('value').split(' ');
 
             todo.set('tags', tokens.filter(function(each) {
@@ -18,7 +28,11 @@
             }).join(' '));
 
             if (todo.get('_id')) {
-                app.todosController.update(todo);
+                if (! todo.get('title').trim()) {
+                    app.todosController.del(todo);
+                } else {
+                    app.todosController.update(todo);
+                }
             } else {
                 app.todosController.create(todo);
             }
