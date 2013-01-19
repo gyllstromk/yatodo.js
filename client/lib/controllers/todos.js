@@ -9,13 +9,12 @@
         page: 0,
 
         init: function() {
+            console.log('init');
             var self = this;
             $.ajax({
                 url: '/todos?page=0&page_size=100',
                 dateType: 'json'
             }).success(function(data) {
-                console.log(data.todos, typeof data.todos);
-                console.log(Ember.A(data.todos));
                 self.get('content').pushObjects(data.todos.map(function(each) {
                     if (! each.title) {
                         each.title = 'empty';
@@ -26,8 +25,6 @@
         },
 
         del: function(todo) {
-            console.log('deleting', todo.get('_id'));
-
             $.ajax({
                 url:         '/todos/' + todo._id,
                 type:        'DELETE'
@@ -57,6 +54,11 @@
                 console.log('err', err);
             });
         },
+
+        pages: function() {
+            console.log('hee');
+            return [1, 2, 3];
+        }.property(),
 
         create: function(todo) {
             var self = this;
@@ -107,13 +109,11 @@
 
             events: {
                 insertNewTodo: function() {
-                    console.log('ee');
                     app.todosController.create(app.Todo.create({ title: 'New todo' }));
                 },
 
-                sup: function(todo) {
+                edit: function(todo) {
                     todo.set('isEditing', true);
-                    console.log('ssa');
                 },
 
                 setTagFilter: function(event) {

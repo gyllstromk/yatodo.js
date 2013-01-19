@@ -18,7 +18,8 @@
     {{#if item.isEditing}}
         {{view App.TextField contentBinding="item"}}
     {{else}}
-        <span {{bindAttr class="item.isCompleted"}} {{action "sup" item}}>{{item.title}}</span>
+        {{view Ember.Checkbox checkedBinding="item.completed"}}
+        <span {{bindAttr class="item.isCompleted"}} {{action "edit" item}}>{{item.title}}</span>
         {{#each tag in item.tags}}
             <a class="label" {{action "setTagFilter" tag}}>
                 {{tag}}
@@ -27,3 +28,5 @@
     {{/if}}
 </div>
 {{/each}}
+
+{{view App.PaginationView}}

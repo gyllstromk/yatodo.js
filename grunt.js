@@ -18,7 +18,10 @@ module.exports = function(grunt) {
                        'client/lib/models/**.js',
                        'client/lib/router.js',
                        'client/lib/views/**.js',
-                       'client/lib/controllers/**.js',
+//                        'client/lib/controllers/**.js',
+                       'client/lib/controllers/todos.js',
+                       'client/lib/controllers/filtered.js',
+                       'client/lib/controllers/paged.js',
                 ],
                 dest: 'public/application.js'
             },
