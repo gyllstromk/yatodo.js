@@ -29,4 +29,10 @@
 </div>
 {{/each}}
 
-{{view App.PaginationView}}
+<div class="pagination">
+    <ul>
+        {{#each item in model.pages}}
+            <li><a {{action setPage item}}>{{item}}</a></li>
+        {{/each}}
+    </ul>
+</div>

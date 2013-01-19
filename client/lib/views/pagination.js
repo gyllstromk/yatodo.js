@@ -3,14 +3,13 @@
 (function(app) {
     'use strict';
 
-    app.PaginationView = Ember.ContainerView.extend({
+    app.paginationView = Ember.ContainerView.create({
         classNames: [ 'pagination' ],
         childViews: ['collectionView'],
-        content: [1, 2, 3],
 
-        collectionView: Ember.CollectionView.extend({
+        collectionView: Ember.CollectionView.create({
             tagName: 'ul',
-            content: 'parentView.content',
+//             content: app.todosController.get('pageArray'),
 
             itemViewClass: Ember.View.extend({
                 template: Em.Handlebars.compile('<a href="#">{{view.content}}</a>')

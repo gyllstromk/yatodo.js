@@ -12,7 +12,8 @@
             console.log('init');
             var self = this;
             $.ajax({
-                url: '/todos?page=0&page_size=100',
+                url: '/todos',
+//                 url: '/todos?page=0&page_size=100',
                 dateType: 'json'
             }).success(function(data) {
                 self.get('content').pushObjects(data.todos.map(function(each) {
@@ -56,9 +57,15 @@
         },
 
         pages: function() {
-            console.log('hee');
-            return [1, 2, 3];
-        }.property(),
+            console.log('here');
+            var content = this.get('filteredContent.length');
+            console.log(content);
+            var pages = [];
+            for (var i = 0; i < content / 20; i++) {
+                pages.add(i);
+            }
+            return pages;
+        }.property('filteredContent.length'),
 
         create: function(todo) {
             var self = this;
@@ -83,6 +90,7 @@
         },
 
         filteredContent: function() {
+            this.set('page', 0);
             var content = this.get('content');
             if (! this.get('showAll')) {
                 return content.filter(function(each) {
@@ -96,7 +104,7 @@
             var page = this.get('page');
             var pageSize = 20;
             return this.get('filteredContent').slice(page * pageSize, (page + 1) * pageSize);
-        }.property('filteredContent')
+        }.property('filteredContent', 'page')
     });
 
     app.todosController = TodosController.create();
@@ -110,6 +118,10 @@
             events: {
                 insertNewTodo: function() {
                     app.todosController.create(app.Todo.create({ title: 'New todo' }));
+                },
+
+                setPage: function(page) {
+                    app.todosController.set('page', page);
                 },
 
                 edit: function(todo) {
