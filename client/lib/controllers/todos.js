@@ -6,6 +6,7 @@
     var TodosController = Ember.ArrayController.extend({
         content: [],
         showAll: false,
+        searchQuery: null,
         page: 0,
 
         init: function() {
@@ -88,12 +89,37 @@
             this.set('page', 0);
             var content = this.get('content');
             if (! this.get('showAll')) {
-                return content.filter(function(each) {
+                content = content.filter(function(each) {
                     return ! each.completed;
                 });
             }
+
+            var query = this.get('searchQuery');
+            if (query) {
+                var terms = query.split(' ');
+                var titleQuery = terms.filter(function(each) {
+                    return each[0] !== '#';
+                }).join(' ');
+
+                var tags = terms.filter(function(each) {
+                    return each[0] === '#';
+                }).map(function(each) {
+                    return each.slice(1);
+                });
+
+                content = content.filter(function(todo) {
+                    var hasTags = tags.every(function(tag) {
+                        return todo.tags.some(function(todoTag) {
+                            return todoTag.startsWith(tag);
+                        });
+                    });
+
+                    return todo.title.indexOf(titleQuery) !== -1 && hasTags;
+                });
+            }
+
             return content;
-        }.property('content.@each', 'showAll'),
+        }.property('content.@each', 'showAll', 'searchQuery'),
 
         arrangedContent: function() {
             var page = this.get('page');

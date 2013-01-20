@@ -10,7 +10,6 @@
 
             <div class="row-fluid">
                 <button class="btn" {{action insertNewTodo}}><span class="icon-plus-sign"></span></button>
-                Show all {{view Ember.Checkbox checkedBinding="model.showAll" class="toggle"}}
 
                 {{#if model.tagFilter}}
                 <div>
@@ -21,9 +20,9 @@
                 </div>
                 {{/if}}
 
-                <form class="navbar-search pull-right">
-                    <input type="text" class="search-query" placeholder="Search">
-                </form>
+                {{view App.SearchTextField classNames="search-query"}}
+                Show all {{view Ember.Checkbox checkedBinding="model.showAll" class="toggle"}}
+
                 <table class="table table-striped">
                 <thead>
                 <tr>
