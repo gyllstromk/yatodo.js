@@ -62,10 +62,11 @@
             var content = this.get('filteredContent.length');
             var pages = [];
             for (var i = 0; i < content / 20; i++) {
-                pages.add(i);
+                pages.add({ number: i, isActive: i === this.get('page') });
             }
+
             return pages;
-        }.property('filteredContent.length'),
+        }.property('filteredContent.length', 'page'),
 
         create: function(todo) {
             var self = this;
@@ -122,7 +123,7 @@
                 },
 
                 setPage: function(page) {
-                    app.todosController.set('page', page);
+                    app.todosController.set('page', page.number);
                 },
 
                 edit: function(todo) {

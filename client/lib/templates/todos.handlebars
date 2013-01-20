@@ -31,8 +31,8 @@
 
 <div class="pagination">
     <ul>
-        {{#each item in model.pages}}
-            <li><a {{action setPage item}}>{{item}}</a></li>
+        {{#each page in model.pages}}
+            <li {{bindAttr class="page.isActive:active"}}><a {{action setPage page}}>{{page.number}}</a></li>
         {{/each}}
     </ul>
 </div>
