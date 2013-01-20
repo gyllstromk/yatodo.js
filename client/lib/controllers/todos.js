@@ -9,7 +9,6 @@
         page: 0,
 
         init: function() {
-            console.log('init');
             var self = this;
             $.ajax({
                 url: '/todos',
@@ -32,7 +31,6 @@
                 type:        'DELETE'
             }).success(function(response) {
                 console.log('deleted', response);
-                console.log('trying to delete', todo);
                 self.removeObject(todo);
             }).error(function(err) {
                 console.log('err', err);
@@ -58,7 +56,6 @@
         },
 
         pages: function() {
-            console.log('here');
             var content = this.get('filteredContent.length');
             var pages = [];
             for (var i = 0; i < content / 20; i++) {
@@ -70,7 +67,6 @@
 
         create: function(todo) {
             var self = this;
-            console.log('creating', todo);
 
             $.ajax({
 
@@ -82,7 +78,6 @@
                 processData: false
 
             }).success(function(response) {
-                console.log('inserting', response.todo);
                 self.insertAt(0, app.Todo.create(response.todo));
             }).error(function(err) {
                 console.log('err', err);
@@ -90,7 +85,6 @@
         },
 
         filteredContent: function() {
-            console.log('ee');
             this.set('page', 0);
             var content = this.get('content');
             if (! this.get('showAll')) {
@@ -102,7 +96,6 @@
         }.property('content.@each', 'showAll'),
 
         arrangedContent: function() {
-            console.log('grat');
             var page = this.get('page');
             var pageSize = 20;
             return this.get('filteredContent').slice(page * pageSize, (page + 1) * pageSize);

@@ -8,26 +8,46 @@
         },
 
         value: function() {
-            return this.get('content.title') + ' ' + (this.get('content.tags') || []).map(function(each) {
-                return '#' + each;
-            }).join(' ');
+            var val = this.get('content.title');
+
+//             var due = this.get('content.due');
+//             if (due) {
+//                 val += '@' + due;
+//             }
+
+            var tags = this.get('content.tags');
+            if (tags) {
+                val += ' ' + tags.map(function(each) {
+                    return '#' + each;
+                }).join(' ');
+            }
+
+            return val;
         }.property('title'),
 
         insertNewline: function() {
-            var todo = this.get('content') || app.Todo.create();
-            var tokens = this.get('value').split(' ');
+            var tags = [];
+            var title = '';
+            var due;
 
-            todo.setProperties({
-                tags: tokens.filter(function(each) {
-                    return each.startsWith('#');
-                }).map(function(each) {
-                    return each.slice(1);
-                }),
+            this.get('value').split(' ').each(function(each) {
+                if (each.startsWith('#')) {
+                    tags.add(each.slice(1));
+                } else if (each.startsWith('@')) {
+                    if (each.length === 1) {
+                        due = null;
+                    } else {
+                        due = Date.create(each.slice(1));
+                    }
+                } else {
+                    title = (title + ' ' + each).trim();
+                }
+            });
 
-                title: tokens.filter(function(each) {
-                    return ! each.startsWith('#');
-                }).join(' '),
-
+            this.get('content').setProperties({
+                tags: tags,
+                title: title,
+                due: due,
                 isEditing: false
             });
         }

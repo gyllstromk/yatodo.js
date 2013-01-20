@@ -1,11 +1,17 @@
+/*globals Ember*/
+
 (function(app) {
     'use strict';
 
     app.Todo = Ember.Object.extend({
         toModel: function() {
             return Object.select(this, 'title', 'created', 'completed', '_id',
-                'tags');
+                'tags', 'due');
         },
+
+        isDue: function() {
+            return this.get('due');
+        }.property('due'),
 
         isCompleted: function() {
             return this.get('completed');
@@ -17,6 +23,6 @@
             } else {
                 app.todosController.update(this);
             }
-        }.observes('completed', 'title', 'tags')
+        }.observes('completed', 'title', 'tags', 'due')
     });
 })(window.App);

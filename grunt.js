@@ -7,36 +7,45 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [ 
-                       'components/jquery/jquery.js',
-                       'components/sugar/release/1.3.7/sugar-1.3.7.min.js',
-                       'components/handlebars/handlebars-1.0.0-rc.1.js',
-                       'components/bootstrap/docs/assets/js/bootstrap.js',
-                       'vendor/ember.js/dist/ember.js',
-                       'vendor/data/dist/ember-data.js',
-                       'public/application.js',
-                       'client/lib/app.js',
-                       'client/lib/models/**.js',
-                       'client/lib/router.js',
-//                        'client/lib/controllers/**.js',
-                       'client/lib/controllers/todos.js',
-                       'client/lib/views/**.js',
-                       'client/lib/controllers/filtered.js',
-                       'client/lib/controllers/paged.js',
+                    'components/jquery/jquery.js',
+                    'components/sugar/release/1.3.7/sugar-1.3.7.min.js',
+                    'components/handlebars/handlebars-1.0.0-rc.1.js',
+                    'components/bootstrap/docs/assets/js/bootstrap.js',
+                    'vendor/ember.js/dist/ember.js',
+                    'vendor/data/dist/ember-data.js',
+                    'public/application.js',
+                    'client/lib/app.js',
+                    'client/lib/models/**.js',
+                    'client/lib/router.js',
+                    'client/lib/controllers/**.js',
+                    'client/lib/views/**.js',
                 ],
                 dest: 'public/application.js'
             },
-            css: {
-                src: [
-                    'components/bootstrap/docs/assets/css/bootstrap.css'
-                ],
-                dest: 'public/assets.css'
-            },
+//             css: {
+//                 src: [
+//                     'components/bootstrap/docs/assets/css/bootstrap.css'
+//                 ],
+//                 dest: 'public/assets.css'
+//             },
         },
 
         copy: {
             dist: {
                 files: {
                     'public/': [ 'client/static/**' ]
+                }
+            },
+
+            bootstrap: {
+                files: {
+                    'public/': [ 'components/bootstrap/docs/assets/css/bootstrap.css' ]
+                }
+            },
+
+            images: {
+                files: {
+                    'public/img/': [ 'components/bootstrap/img/*' ]
                 }
             }
         },
