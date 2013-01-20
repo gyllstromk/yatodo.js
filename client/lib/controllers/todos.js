@@ -6,7 +6,7 @@
     var TodosController = Ember.ArrayController.extend({
         content: [],
         showAll: false,
-        searchQuery: null,
+        searchQuery: '',
         page: 0,
 
         init: function() {
@@ -152,7 +152,7 @@
                 addTagQuery: function(tag) {
                     var query = app.todosController.get('searchQuery');
                     query += ' ' + '#' + tag;
-                    var query = app.todosController.set('searchQuery', query);
+                    app.todosController.set('searchQuery', query.trim());
                 }
             }
         })
