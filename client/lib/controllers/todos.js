@@ -149,8 +149,10 @@
                     todo.set('isEditing', true);
                 },
 
-                setTagFilter: function(event) {
-                    app.todosController.set('tagFilter', event);
+                addTagQuery: function(tag) {
+                    var query = app.todosController.get('searchQuery');
+                    query += ' ' + '#' + tag;
+                    var query = app.todosController.set('searchQuery', query);
                 }
             }
         })

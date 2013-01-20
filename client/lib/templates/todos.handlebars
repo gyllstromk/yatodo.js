@@ -11,16 +11,10 @@
             <div class="row-fluid">
                 <button class="btn" {{action insertNewTodo}}><span class="icon-plus-sign"></span></button>
 
-                {{#if model.tagFilter}}
-                <div>
-                    Filtering by:
-                    <a class="label" {{action "setTagFilter"}}>
-                        {{model.tagFilter}}
-                    </a>
-                </div>
-                {{/if}}
-
-                {{view App.SearchTextField classNames="search-query"}}
+                {{view App.TextField classNames="search-query"
+                                     placeholder="Search ..."
+                                     valueBinding="App.todosController.searchQuery"
+                }}
                 Show all {{view Ember.Checkbox checkedBinding="model.showAll" class="toggle"}}
 
                 <table class="table table-striped">
@@ -50,7 +44,7 @@
 
                     <td>
                         {{#each tag in item.tags}}
-                            <a class="label" {{action "setTagFilter" tag}}>{{tag}}</a>
+                            <a class="label" {{action "addTagQuery" tag}}>{{tag}}</a>
                         {{/each}}
                     </td>
                 </tr>
