@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
             bootstrap: {
                 files: {
-                    'public/': [ 'components/bootstrap/docs/assets/css/bootstrap.css' ]
+                    'public/css/': [ 'components/bootstrap/docs/assets/css/*.css' ]
                 }
             },
 
