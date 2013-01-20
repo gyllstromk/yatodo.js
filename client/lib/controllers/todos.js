@@ -119,7 +119,7 @@
             }
 
             return content;
-        }.property('content.@each', 'showAll', 'searchQuery'),
+        }.property('content.@each', 'showAll', 'searchQuery', 'content.@each.completed'),
 
         arrangedContent: function() {
             var page = this.get('page');
