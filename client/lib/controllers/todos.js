@@ -3,6 +3,8 @@
 (function(app) {
     'use strict';
 
+    var pageSize = 10;
+
     var TodosController = Ember.ArrayController.extend({
         content: [],
         showAll: false,
@@ -59,7 +61,7 @@
         pages: function() {
             var content = this.get('filteredContent.length');
             var pages = [];
-            for (var i = 0; i < content / 20; i++) {
+            for (var i = 0; i < content / pageSize; i++) {
                 pages.add({ number: i, isActive: i === this.get('page') });
             }
 
@@ -123,8 +125,8 @@
 
         arrangedContent: function() {
             var page = this.get('page');
-            var pageSize = 20;
-            return this.get('filteredContent').slice(page * pageSize, (page + 1) * pageSize);
+            return this.get('filteredContent').slice(page * pageSize, (page +
+                        1) * pageSize);
         }.property('filteredContent.@each', 'page')
     });
 
