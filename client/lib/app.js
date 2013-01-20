@@ -1,19 +1,6 @@
-var TodosController = Ember.ArrayController.extend({
-//     sortProperties: ['created'],
-//     sortAscending: false
-});
+/*globals Ember,DS,console*/
+(function(win) {
+    'use strict';
 
-var App = Em.Application.create({
-    ApplicationController: Ember.Controller.extend(),
-    ApplicationView: ApplicationView,
-    Router: Router,
-    TodosView: TodosView,
-    TodosController: TodosController,
-    todosController: TodosController.create(),
-    rootElement: '#appapp',
-//     ready: function() {
-//         this.initialize();
-//     }
-});
-
-window.Todos = App;
+    win.App = Ember.Application.create();
+})(window);
