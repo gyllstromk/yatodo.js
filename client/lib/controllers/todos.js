@@ -121,7 +121,7 @@
             }
 
             return content;
-        }.property('content.@each', 'showAll', 'searchQuery', 'content.@each.completed'),
+        }.property('content.@each', 'showAll', 'searchQuery', 'content.@each.completed', 'content.@each.tags'),
 
         arrangedContent: function() {
             var page = this.get('page');
