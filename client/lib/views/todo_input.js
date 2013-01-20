@@ -17,27 +17,19 @@
             var todo = this.get('content') || app.Todo.create();
             var tokens = this.get('value').split(' ');
 
-            todo.set('tags', tokens.filter(function(each) {
-                return each.startsWith('#');
-            }).map(function(each) {
-                return each.slice(1);
-            }));
+            todo.setProperties({
+                tags: tokens.filter(function(each) {
+                    return each.startsWith('#');
+                }).map(function(each) {
+                    return each.slice(1);
+                }),
 
-            todo.set('title', tokens.filter(function(each) {
-                return ! each.startsWith('#');
-            }).join(' '));
+                title: tokens.filter(function(each) {
+                    return ! each.startsWith('#');
+                }).join(' '),
 
-            if (todo.get('_id')) {
-                if (! todo.get('title').trim()) {
-                    app.todosController.del(todo);
-                } else {
-                    app.todosController.update(todo);
-                }
-            } else {
-                app.todosController.create(todo);
-            }
-
-            todo.set('isEditing', false);
+                isEditing: false
+            });
         }
     });
 })(window.App);

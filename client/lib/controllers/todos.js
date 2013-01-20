@@ -41,7 +41,6 @@
 
         update: function(todo) {
             var self = this;
-            console.log('creating', todo);
             todo = todo.toModel();
 
             $.ajax({

@@ -3,17 +3,20 @@
 
     app.Todo = Ember.Object.extend({
         toModel: function() {
-            var model = {};
-            model.title = this.get('title');
-            model.created = this.get('created');
-            model.completed = this.get('completed');
-            model._id = this.get('_id');
-            model.tags = this.get('tags');
-            return model;
+            return Object.select(this, 'title', 'created', 'completed', '_id',
+                'tags');
         },
 
         isCompleted: function() {
             return this.get('completed');
         }.property('completed'),
+
+        onUpdate: function() {
+            if (! this.get('title').trim()) {
+                app.todosController.del(this);
+            } else {
+                app.todosController.update(this);
+            }
+        }.observes('completed', 'title', 'tags')
     });
 })(window.App);
