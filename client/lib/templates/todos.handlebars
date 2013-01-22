@@ -13,7 +13,7 @@
                 <div class="span7">
                     <button class="btn" {{action insertNewTodo}}><span class="icon-plus-sign"></span></button>
 
-                    {{view App.TextField classNames="search-query"
+                    {{view Ember.TextField classNames ="search-query"
                                          placeholder="Search ..."
                                          valueBinding="App.todosController.searchQuery"
                     }}
