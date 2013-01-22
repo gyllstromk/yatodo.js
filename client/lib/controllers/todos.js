@@ -81,7 +81,9 @@
                 processData: false
 
             }).success(function(response) {
-                self.insertAt(0, app.Todo.create(response.todo));
+                todo = app.Todo.create(response.todo);
+                self.insertAt(0, todo);
+                todo.set('isEditing', true);
             }).error(function(err) {
                 console.log('err', err);
             });
