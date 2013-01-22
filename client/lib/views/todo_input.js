@@ -7,6 +7,12 @@
             this.set('content.isEditing', false);
         },
 
+        keyUp: function(event) {
+            if (event.keyCode === 27) {
+                this.set('content.isEditing', false);
+            }
+        },
+
         value: function() {
             var val = this.get('content.title');
 
