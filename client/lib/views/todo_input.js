@@ -3,6 +3,10 @@
     'use strict';
 
     app.TextField = Ember.TextField.extend({
+        didInsertElement: function() {
+            this.$().focus();
+        },
+
         focusOut: function() {
             this.set('content.isEditing', false);
         },
