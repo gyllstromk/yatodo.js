@@ -52,7 +52,7 @@ module.exports = function(grunt) {
 
         watch: {
             scripts: {
-                files: [ 'client/lib/**js', '<config:concat.dist.src>', 'resources/**js' ],
+                files: [ 'client/static/*', 'client/lib/templates/*.handlebars', 'client/lib/**js', 'resources/**js' ],
                 tasks: 'handlebars_embed concat copy server'
             }
         }
