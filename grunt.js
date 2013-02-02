@@ -7,12 +7,13 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [ 
-                    'components/jquery/jquery.js',
-                    'components/sugar/release/1.3.7/sugar-1.3.7.min.js',
-                    'components/handlebars/handlebars-1.0.0-rc.1.js',
+                    'vendor/jquery-1.8.0.js',
+//                     'components/jquery/jquery.js',
+                    'components/sugar/release/sugar-full.development.js',
+                    'components/handlebars/handlebars.js',
                     'components/bootstrap/docs/assets/js/bootstrap.js',
-                    'vendor/ember.js/dist/ember.js',
-                    'vendor/data/dist/ember-data.js',
+//                     'vendor/ember.js/dist/ember.js',
+                    'components/ember/ember.js',
                     'public/application.js',
                     'client/lib/app.js',
                     'client/lib/models/**.js',
@@ -52,7 +53,7 @@ module.exports = function(grunt) {
 
         watch: {
             scripts: {
-                files: [ 'client/static/*', 'client/lib/templates/*.handlebars', 'client/lib/**js', 'resources/**js' ],
+                files: [ 'client/static/*', 'client/lib/templates/*.handlebars', 'client/lib/**/*js', 'resources/**js' ],
                 tasks: 'handlebars_embed concat copy server'
             }
         }

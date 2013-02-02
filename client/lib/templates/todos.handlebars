@@ -71,15 +71,7 @@
             </div>
 
             <div class="row-fluid">
-                <div class="pagination pagination-centered">
-                    <ul>
-                        {{#each page in model.pages}}
-                            <li {{bindAttr class="page.isActive:active"}}>
-                                <a {{action setPage page}}>{{page.number}}</a>
-                            </li>
-                        {{/each}}
-                    </ul>
-                </div>
+                {{view App.PaginationView controllerBinding="model"}}
             </div>
         </div>
     </div>

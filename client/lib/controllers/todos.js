@@ -3,13 +3,12 @@
 (function(app) {
     'use strict';
 
-    var pageSize = 10;
-
     var TodosController = Ember.ArrayController.extend({
         content: [],
         showAll: false,
         searchQuery: '',
         page: 0,
+        pageSize: 10,
 
         init: function() {
             var self = this;
@@ -58,15 +57,10 @@
             });
         },
 
-        pages: function() {
+        pageCount: function() {
             var content = this.get('filteredContent.length');
-            var pages = [];
-            for (var i = 0; i < content / pageSize; i++) {
-                pages.add({ number: i, isActive: i === this.get('page') });
-            }
-
-            return pages;
-        }.property('filteredContent.length', 'page'),
+            return Math.ceil(content / this.get('pageSize'));
+        }.property('filteredContent.length', 'pageSize'),
 
         create: function(todo) {
             var self = this;
@@ -127,8 +121,8 @@
 
         arrangedContent: function() {
             var page = this.get('page');
-            return this.get('filteredContent').slice(page * pageSize, (page +
-                        1) * pageSize);
+            return this.get('filteredContent').slice(page * this.get('pageSize'), (page +
+                        1) * this.get('pageSize'));
         }.property('filteredContent.@each', 'page')
     });
 
@@ -143,10 +137,6 @@
             events: {
                 insertNewTodo: function() {
                     app.todosController.create(app.Todo.create({ title: 'New todo' }));
-                },
-
-                setPage: function(page) {
-                    app.todosController.set('page', page.number);
                 },
 
                 edit: function(todo) {

@@ -2,7 +2,8 @@
     'use strict';
 
     app.Router.map(function(match) {
-        match('/todos').to('todos');
+        this.route('todos', { path: '/todos' });
+//         match('/todos').to('todos');
     });
 })(window.App);
 
