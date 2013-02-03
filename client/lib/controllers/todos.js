@@ -60,7 +60,7 @@
         pageCount: function() {
             var content = this.get('filteredContent.length');
             return Math.ceil(content / this.get('pageSize'));
-        }.property('filteredContent.length', 'pageSize'),
+        }.property('filteredContent', 'pageSize'),
 
         create: function(todo) {
             var self = this;
@@ -84,7 +84,6 @@
         },
 
         filteredContent: function() {
-            this.set('page', 0);
             var content = this.get('content');
             if (! this.get('showAll')) {
                 content = content.filter(function(each) {
@@ -118,6 +117,10 @@
 
             return content;
         }.property('content.@each', 'showAll', 'searchQuery', 'content.@each.completed', 'content.@each.tags'),
+
+        resetPage: function() {
+            this.set('page', 0);
+        }.observes('searchQuery', 'showAll'),
 
         arrangedContent: function() {
             var page = this.get('page');
