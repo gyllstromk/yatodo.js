@@ -9,6 +9,7 @@
         searchQuery: '',
         page: 0,
         pageSize: 10,
+        onlyDue: false,
 
         init: function() {
             var self = this;
@@ -91,6 +92,12 @@
                 });
             }
 
+            if (this.get('onlyDue')) {
+                content = content.filter(function(each) {
+                    return each.get('isDue');
+                });
+            }
+
             var query = this.get('searchQuery');
             if (query) {
                 var terms = query.split(' ');
@@ -116,7 +123,8 @@
             }
 
             return content;
-        }.property('content.@each', 'showAll', 'searchQuery', 'content.@each.completed', 'content.@each.tags'),
+        }.property('content.@each', 'onlyDue', 'showAll', 'searchQuery',
+                'content.@each.completed', 'content.@each.tags'),
 
         resetPage: function() {
             this.set('page', 0);
@@ -144,6 +152,10 @@
 
                 edit: function(todo) {
                     todo.set('isEditing', true);
+                },
+
+                toggleDateFilter: function(by) {
+                    app.todosController.toggleProperty('onlyDue');
                 },
 
                 addTagQuery: function(tag) {
