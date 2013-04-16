@@ -10,12 +10,13 @@
         page: 0,
         pageSize: 10,
         onlyDue: false,
+        pageOptions: [5, 10, 20],
 
         init: function() {
+            this._super();
             var self = this;
             $.ajax({
                 url: '/todos',
-//                 url: '/todos?page=0&page_size=100',
                 dateType: 'json'
             }).success(function(data) {
                 self.get('content').pushObjects(data.todos.map(function(each) {
@@ -134,7 +135,7 @@
             var page = this.get('page');
             return this.get('filteredContent').slice(page * this.get('pageSize'), (page +
                         1) * this.get('pageSize'));
-        }.property('filteredContent.@each', 'page')
+        }.property('filteredContent.@each', 'page', 'pageSize')
     });
 
     app.todosController = TodosController.create();

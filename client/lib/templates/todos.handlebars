@@ -17,6 +17,9 @@
                                          placeholder="Search ..."
                                          valueBinding="App.todosController.searchQuery"
                     }}
+
+                    {{view Ember.Select contentBinding="App.todosController.pageOptions"
+                                        valueBinding  ="App.todosController.pageSize"}}
                 </div>
             </div>
 
@@ -54,7 +57,7 @@
 
                                 <td>
                                     {{#if item.isDue}}
-                                        <a class="icon-calendar" {{bindAttr title="item.due"}}></a>
+                                        <a class="icon-calendar" {{bindAttr title="item.isDue"}}></a>
                                     {{/if}}
                                 </td>
 
