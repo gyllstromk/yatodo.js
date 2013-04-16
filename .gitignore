@@ -1,5 +1,5 @@
 .data
 node_modules
-public/assets
 var
-etc
+public
+components

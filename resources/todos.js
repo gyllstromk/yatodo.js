@@ -1,20 +1,27 @@
 var sugar = require('sugar'),
     mongodb = require('mongodb');
 
-var url = 'mongodb://127.0.0.1:27018/todosback';
+if (! process.env.mongoUrl) {
+    throw new Error('mongoUrl not specified.');
+}
+var url = process.env.mongoUrl || 'mongodb://127.0.0.1:27018/todosback';
 
 module.exports = function(app) {
     app.get('/todos', function(req, res, next) {
         for (var key in req.query) {
             if (req.query[key] === 'true') {
                 req.query[key] = true;
-            } if (req.query[key] === 'false') {
+            } else if (req.query[key] === 'false') {
                 req.query[key] = false;
             }
         }
 
-        var page = parseInt(req.query.page, 10) || 0;
-        var page_size = parseInt(req.query.page_size, 10) || 10;
+        var page, page_size;
+
+        if (req.query.page) {
+            page = parseInt(req.query.page, 10) || 0;
+            page_size = parseInt(req.query.page_size, 10) || 10;
+        }
 
         delete req.query.page;
         delete req.query.page_size;
@@ -22,8 +29,11 @@ module.exports = function(app) {
         require('mongodb').connect(url, function(err, connection) {
             connection.collection('todos', function(err, collection) {
                 var cursor = collection.find(req.query);
+//                 cursor.sort({ _id: -1 });
                 cursor.sort({ created: -1 });
-                cursor.skip(page_size * page).limit(page_size);
+                if (typeof page !== 'undefined') {
+                    cursor.skip(page_size * page).limit(page_size);
+                }
                 cursor.toArray(function(err, results) {
                     connection.close();
                     res.json({ todos: results });
@@ -44,74 +54,50 @@ module.exports = function(app) {
     });
 
     app.post('/todos', function(req, res, next) {
-        getTodo(req, function(todo) {
-//         var todo = req.body.todo;
-            console.log(todo);
-            if (! todo.hasOwnProperty('completed')) {
-                todo.completed = false;
-            }
+        var todo = req.body;
 
-            if (! todo.created) {
-                todo.created = new Date();
-                console.log(todo.created);
-            }
+        if (! todo.title) {
+            return res.send(400, 'Missing title');
+        }
 
-        //     todo.forEach(function(td) {
-        //         if (td.id) {
-        //             delete td.id;
-        //             delete td.dependers;
-        //             delete td.dependees;
-        //             delete td.due;
-        //         }
-        //     });
+        if (! todo.completed) {
+            todo.completed = false;
+        }
 
-            console.log('todo', todo);
+        if (! todo.created) {
+            todo.created = Date.create();
+        } else {
+            todo.created = Date.create(todo.created);
+        }
 
-            require('mongodb').connect(url, function(err, connection) {
-                connection.collection('todos', function(err, collection) {
-                    collection.save(todo, function(err, results) {
-                        console.log(err, results);
-                        res.send(200, { todo: results });
-                        connection.close();
-                    });
+        require('mongodb').connect(url, function(err, connection) {
+            connection.collection('todos', function(err, collection) {
+                collection.save(todo, function(err, results) {
+                    res.send(200, { todo: results });
+                    connection.close();
                 });
             });
         });
     });
 
-    var getTodo = function(req, callback) {
-        var data = '';
-
-        req.on('data', function(res) {
-            data += res;
-        });
-
-        req.on('end', function() {
-            callback(JSON.parse(data.toString()).todo);
-        });
-    };
-
     app.put('/todos/:id', function(req, res, next) {
-// 
-//             
-//             var todo = req.body.todo;
+        var todo = req.body;
+        console.log('eee', todo);
 
-        getTodo(req, function(todo) {
-            require('mongodb').connect(url, function(err, connection) {
-                console.log(err);
-                connection.collection('todos', function(err, collection) {
-                    console.log(todo);
-                    todo._id = require('mongodb').ObjectID.createFromHexString(todo._id);
-                    todo.created = new Date(todo.created);
-                    collection.update({ _id: todo._id }, todo, function(err, result) {
-                        console.log(err);
-                        collection.save(todo, function(err, result) {
-                            console.log('ok', err, result);
-                            console.log(todo);
-                            console.log({ todo: todo });
-                            res.send(200, { todo: todo });
-                            connection.close();
-                        });
+        require('mongodb').connect(url, function(err, connection) {
+            console.log(err);
+            connection.collection('todos', function(err, collection) {
+                console.log(todo);
+                todo._id = require('mongodb').ObjectID.createFromHexString(todo._id);
+                todo.created = new Date(todo.created);
+                collection.update({ _id: todo._id }, todo, function(err, result) {
+                    console.log(err);
+                    collection.save(todo, function(err, result) {
+                        console.log('ok', err, result);
+                        console.log(todo);
+                        console.log({ todo: todo });
+                        res.send(200, { todo: todo });
+                        connection.close();
                     });
                 });
             });
@@ -132,7 +118,9 @@ module.exports = function(app) {
 //     });
 
     app.del('/todos/:id', function(req, res, next) {
+        console.log('ee');
         var id = require('mongodb').ObjectID.createFromHexString(req.params.id);
+        console.log('deleting', id);
 
         require('mongodb').connect(url, function(err, connection) {
             connection.collection('todos', function(err, collection) {

@@ -1,0 +1,10 @@
+.is-completed {
+    color: gray;
+    text-decoration: line-through;
+}
+
+.table-striped tbody > tr:nth-child(odd) > td,
+.table-striped tbody > tr:nth-child(odd) > th {
+  background-color: #eeeeee;
+}
+
