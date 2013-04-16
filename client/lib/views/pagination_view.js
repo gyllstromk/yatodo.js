@@ -1,4 +1,4 @@
-(function(app) {
+(function (app) {
 
     app.PaginationView = Ember.ContainerView.extend({
         classNames: [ 'pagination', 'pagination-centered' ],
@@ -10,7 +10,7 @@
             pageLeft: '«',
             pageRight: '»',
 
-            content: function() {
+            content: function () {
                 var range = 3;
                 var pageCount = this.get('controller.pageCount');
                 var page = this.get('controller.page');
@@ -39,13 +39,14 @@
                 return pages;
             }.property('controller.page', 'controller.pageCount'),
 
-            setPage: function(page) {
+            setPage: function (page) {
                 var current = this.get('controller.page');
 
                 if (page === this.get('pageLeft')) {
                     page = Math.max(current - 1, 0);
                 } else if (page === this.get('pageRight')) {
-                    page = Math.min(current + 1, this.get('controller.pageCount') - 1);
+                    page = Math.min(current + 1,
+                            this.get('controller.pageCount') - 1);
                 }
 
                 this.set('controller.page', page);
@@ -53,11 +54,13 @@
 
             itemViewClass: Ember.View.extend({
                 classNameBindings: [ 'active' ],
-                active: function() {
+                active: function () {
                     return this.get('controller.page') === this.get('content');
                 }.property('controller.page'),
 
-                template: Ember.Handlebars.compile('<a href="#" {{action setPage view.content target="view.parentView"}}>{{view.content}}</a>')
+                template: Ember.Handlebars.compile(
+                    '<a href="#" {{action setPage view.content ' +
+                        'target="view.parentView"}}>{{view.content}}</a>')
             })
         })
     });

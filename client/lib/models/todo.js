@@ -1,15 +1,15 @@
 /*globals Ember*/
 
-(function(app) {
+(function (app) {
     'use strict';
 
     app.Todo = Ember.Object.extend({
-        toModel: function() {
+        toModel: function () {
             return Object.select(this, 'title', 'created', 'completed', '_id',
                 'tags', 'due');
         },
 
-        isDue: function() {
+        isDue: function () {
             var due = this.get('due');
             if (due && typeof due !== 'string') {
                 due = due.toString();
@@ -17,11 +17,11 @@
             return due;
         }.property('due'),
 
-        isCompleted: function() {
+        isCompleted: function () {
             return this.get('completed');
         }.property('completed'),
 
-        onUpdate: function() {
+        onUpdate: function () {
             if (! this.get('title').trim()) {
                 app.todosController.del(this);
             } else {

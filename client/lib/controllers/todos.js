@@ -1,6 +1,6 @@
 /*globals Ember,console,$*/
 
-(function(app) {
+(function (app) {
     'use strict';
 
     var TodosController = Ember.ArrayController.extend({
@@ -12,14 +12,14 @@
         onlyDue: false,
         pageOptions: [5, 10, 20],
 
-        init: function() {
+        init: function () {
             this._super();
             var self = this;
             $.ajax({
                 url: '/todos',
                 dateType: 'json'
-            }).success(function(data) {
-                self.get('content').pushObjects(data.todos.map(function(each) {
+            }).success(function (data) {
+                self.get('content').pushObjects(data.todos.map(function (each) {
                     if (! each.title) {
                         each.title = 'empty';
                     }
@@ -28,20 +28,20 @@
             });
         },
 
-        del: function(todo) {
+        del: function (todo) {
             var self = this;
             $.ajax({
                 url:         '/todos/' + todo.get('_id'),
                 type:        'DELETE'
-            }).success(function(response) {
+            }).success(function (response) {
                 console.log('deleted', response);
                 self.removeObject(todo);
-            }).error(function(err) {
+            }).error(function (err) {
                 console.log('err', err);
             });
         },
 
-        update: function(todo) {
+        update: function (todo) {
             var self = this;
             todo = todo.toModel();
 
@@ -52,19 +52,19 @@
                 type:        'PUT',
                 data:        JSON.stringify(todo),
                 processData: false
-            }).success(function(response) {
+            }).success(function (response) {
                 console.log('updated', response.todo);
-            }).error(function(err) {
+            }).error(function (err) {
                 console.log('err', err);
             });
         },
 
-        pageCount: function() {
+        pageCount: function () {
             var content = this.get('filteredContent.length');
             return Math.ceil(content / this.get('pageSize'));
         }.property('filteredContent', 'pageSize'),
 
-        create: function(todo) {
+        create: function (todo) {
             var self = this;
 
             $.ajax({
@@ -76,25 +76,25 @@
                 data:        JSON.stringify(todo.toModel()),
                 processData: false
 
-            }).success(function(response) {
+            }).success(function (response) {
                 todo = app.Todo.create(response.todo);
                 self.insertAt(0, todo);
                 todo.set('isEditing', true);
-            }).error(function(err) {
+            }).error(function (err) {
                 console.log('err', err);
             });
         },
 
-        filteredContent: function() {
+        filteredContent: function () {
             var content = this.get('content');
             if (! this.get('showAll')) {
-                content = content.filter(function(each) {
+                content = content.filter(function (each) {
                     return ! each.completed;
                 });
             }
 
             if (this.get('onlyDue')) {
-                content = content.filter(function(each) {
+                content = content.filter(function (each) {
                     return each.get('isDue');
                 });
             }
@@ -102,19 +102,19 @@
             var query = this.get('searchQuery');
             if (query) {
                 var terms = query.split(' ');
-                var titleQuery = terms.filter(function(each) {
+                var titleQuery = terms.filter(function (each) {
                     return each[0] !== '#';
                 }).join(' ');
 
-                var tags = terms.filter(function(each) {
+                var tags = terms.filter(function (each) {
                     return each[0] === '#';
-                }).map(function(each) {
+                }).map(function (each) {
                     return each.slice(1);
                 });
 
-                content = content.filter(function(todo) {
-                    var hasTags = tags.every(function(tag) {
-                        return todo.tags.some(function(todoTag) {
+                content = content.filter(function (todo) {
+                    var hasTags = tags.every(function (tag) {
+                        return todo.tags.some(function (todoTag) {
                             return todoTag.startsWith(tag);
                         });
                     });
@@ -127,14 +127,14 @@
         }.property('content.@each', 'onlyDue', 'showAll', 'searchQuery',
                 'content.@each.completed', 'content.@each.tags'),
 
-        resetPage: function() {
+        resetPage: function () {
             this.set('page', 0);
         }.observes('searchQuery', 'showAll'),
 
-        arrangedContent: function() {
+        arrangedContent: function () {
             var page = this.get('page');
-            return this.get('filteredContent').slice(page * this.get('pageSize'), (page +
-                        1) * this.get('pageSize'));
+            return this.get('filteredContent').slice(page *
+                    this.get('pageSize'), (page + 1) * this.get('pageSize'));
         }.property('filteredContent.@each', 'page', 'pageSize')
     });
 
@@ -142,24 +142,25 @@
 
     app.reopen({
         TodosRoute: Ember.Route.extend({
-            model: function() {
+            model: function () {
                 return app.todosController;
             },
 
             events: {
-                insertNewTodo: function() {
-                    app.todosController.create(app.Todo.create({ title: 'New todo' }));
+                insertNewTodo: function () {
+                    app.todosController.create(
+                        app.Todo.create({ title: 'New todo' }));
                 },
 
-                edit: function(todo) {
+                edit: function (todo) {
                     todo.set('isEditing', true);
                 },
 
-                toggleDateFilter: function(by) {
+                toggleDateFilter: function (by) {
                     app.todosController.toggleProperty('onlyDue');
                 },
 
-                addTagQuery: function(tag) {
+                addTagQuery: function (tag) {
                     var query = app.todosController.get('searchQuery');
                     query += ' ' + '#' + tag;
                     app.todosController.set('searchQuery', query.trim());

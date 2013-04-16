@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "pretest": "./node_modules/.bin/jshint client/lib"
   },
   "dependencies": {
     "express": "3.0.0rc3",
@@ -17,6 +18,7 @@
     "grunt-ember-templates": "~0.4.4",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-concat": "~0.2.0",
-    "grunt-contrib-watch": "~0.3.1"
+    "grunt-contrib-watch": "~0.3.1",
+    "jshint": "~1.1.0"
   }
 }

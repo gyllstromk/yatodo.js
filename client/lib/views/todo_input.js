@@ -1,23 +1,22 @@
-/*globals Ember,DS,console*/
-(function(app) {
+(function (app) {
     'use strict';
 
     app.TextField = Ember.TextField.extend({
-        didInsertElement: function() {
+        didInsertElement: function () {
             this.$().focus();
         },
 
-        focusOut: function() {
+        focusOut: function () {
             this.set('content.isEditing', false);
         },
 
-        keyUp: function(event) {
+        keyUp: function (event) {
             if (event.keyCode === 27) {
                 this.set('content.isEditing', false);
             }
         },
 
-        value: function() {
+        value: function () {
             var val = this.get('content.title');
 
 //             var due = this.get('content.due');
@@ -27,7 +26,7 @@
 
             var tags = this.get('content.tags');
             if (tags) {
-                val += ' ' + tags.map(function(each) {
+                val += ' ' + tags.map(function (each) {
                     return '#' + each;
                 }).join(' ');
             }
@@ -35,12 +34,12 @@
             return val;
         }.property('title'),
 
-        insertNewline: function() {
+        insertNewline: function () {
             var tags = [];
             var title = '';
             var due;
 
-            this.get('value').split(' ').each(function(each) {
+            this.get('value').split(' ').each(function (each) {
                 if (each.startsWith('#')) {
                     tags.add(each.slice(1));
                 } else if (each.startsWith('@')) {
