@@ -1,6 +1,6 @@
 {
-  "name": "todo",
-  "version": "0.0.1",
+  "name": "yatodo.js",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node app",
