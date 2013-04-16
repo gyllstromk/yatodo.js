@@ -1,7 +1,10 @@
 var sugar = require('sugar'),
     mongodb = require('mongodb');
 
-var url = 'mongodb://127.0.0.1:27018/todosback';
+if (! process.env.mongoUrl) {
+    throw new Error('mongoUrl not specified.');
+}
+var url = process.env.mongoUrl || 'mongodb://127.0.0.1:27018/todosback';
 
 module.exports = function(app) {
     app.get('/todos', function(req, res, next) {
