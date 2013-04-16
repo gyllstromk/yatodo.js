@@ -58,8 +58,8 @@
                 }.property('controller.page'),
 
                 template: Ember.Handlebars.compile('<a href="#" {{action setPage view.content target="view.parentView"}}>{{view.content}}</a>')
-            }),
-        }),
+            })
+        })
     });
 
 }(window.App));
