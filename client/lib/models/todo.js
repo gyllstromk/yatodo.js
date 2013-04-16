@@ -10,7 +10,11 @@
         },
 
         isDue: function() {
-            return this.get('due');
+            var due = this.get('due');
+            if (due && typeof due !== 'string') {
+                due = due.toString();
+            }
+            return due;
         }.property('due'),
 
         isCompleted: function() {
