@@ -7,12 +7,16 @@
   },
   "dependencies": {
     "express": "3.0.0rc3",
-    "jade": "*",
-    "easymongo": "*"
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.7",
+    "sugar": "~1.3.8",
+    "mongodb": "~1.2.14"
   },
   "devDependencies": {
-    "grunt": "~0.3.17",
-    "grunt-emberify": "~0.1.8",
-    "grunt-bowerful": "~0.1.2"
+    "grunt-bowerful": "git://github.com/gyllstromk/grunt-bowerful.git#develop",
+    "grunt-ember-templates": "~0.4.4",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-watch": "~0.3.1"
   }
 }
