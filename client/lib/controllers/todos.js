@@ -127,6 +127,10 @@
         }.property('content.@each', 'onlyDue', 'showAll', 'searchQuery',
                 'content.@each.completed', 'content.@each.tags'),
 
+        toggleShowAll: function (event) {
+            this.toggleProperty('showAll');
+        },
+
         resetPage: function () {
             this.set('page', 0);
         }.observes('searchQuery', 'showAll'),

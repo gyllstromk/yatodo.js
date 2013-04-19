@@ -29,9 +29,10 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>{{view Ember.Checkbox checkedBinding="model.showAll"
-                                                          classNames="toggle pull-right"}}
-                                    <span class="icon-ok"></span>
+                                <th>
+                                    <div class="btn-group" data-toggle="buttons-checkbox">
+                                        <button class="btn" {{action toggleShowAll target="App.todosController"}}><span class="icon-check"></span></button>
+                                    </div>
                                 </th>
                                 <th><span class="icon-list-alt"></span></th>
                                 <th><span {{action toggleDateFilter}} class="icon-calendar"></span></th>
