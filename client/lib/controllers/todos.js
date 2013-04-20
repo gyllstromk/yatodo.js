@@ -14,6 +14,12 @@
 
         init: function () {
             this._super();
+
+            var value = localStorage.getItem('settings.pageSize');
+            if (value) {
+                this.set('pageSize', parseInt(value, 10));
+            }
+
             var self = this;
             $.ajax({
                 url: '/todos',
@@ -58,6 +64,14 @@
                 console.log('err', err);
             });
         },
+
+        _syncPageSize: function () {
+            var stored = localStorage.getItem('settings.pageSize');
+            if (stored !== this.get('pageSize')) {
+                console.log('storing', stored, this.get('pageSize'));
+                localStorage.setItem('settings.pageSize', this.get('pageSize'));
+            }
+        }.observes('pageSize'),
 
         pageCount: function () {
             var content = this.get('filteredContent.length');
