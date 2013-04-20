@@ -1,0 +1,9 @@
+{{#linkTo todos}}&lt; Back to todos{{/linkTo}}
+
+<div>
+    <form class="navbar-form pull-left">
+        <legend>Items per page</legend>
+        {{view Ember.Select contentBinding="App.todosController.pageOptions"
+                            valueBinding  ="App.todosController.pageSize"}}
+    </form>
+</div>
