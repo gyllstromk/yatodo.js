@@ -47,6 +47,9 @@ $(function() {
                         <span {{bindAttr class="item.isCompleted"}}
                               {{action "edit" item}}>
                               {{item.title}}
+                              {{#each link in item.links}}
+                                  {{view App.ExternalLinkView hrefBinding=link}}
+                              {{/each}}
                         </span>
                     </td>
                 {{/if}}

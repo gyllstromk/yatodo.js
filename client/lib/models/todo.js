@@ -6,7 +6,7 @@
     app.Todo = Ember.Object.extend({
         toModel: function () {
             return Object.select(this, 'title', 'created', 'completed', '_id',
-                'tags', 'due');
+                'tags', 'due', 'links');
         },
 
         isDue: function () {
@@ -27,6 +27,6 @@
             } else {
                 app.todosController.update(this);
             }
-        }.observes('completed', 'title', 'tags', 'due')
+        }.observes('completed', 'title', 'tags', 'due', 'links.@each')
     });
 })(window.App);

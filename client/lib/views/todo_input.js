@@ -31,12 +31,17 @@
                 }).join(' ');
             }
 
+            (this.get('content.links') || []).each(function (each) {
+                val += ' ' + each;
+            });
+
             return val;
         }.property('title'),
 
         insertNewline: function () {
             var tags = [];
             var title = '';
+            var links = [];
             var due;
 
             this.get('value').split(' ').each(function (each) {
@@ -48,6 +53,8 @@
                     } else {
                         due = Date.create(each.slice(1));
                     }
+                } else if (/https{0,1}:\/\//.test(each)) {
+                    links.add(each);
                 } else {
                     title = (title + ' ' + each).trim();
                 }
@@ -57,6 +64,7 @@
                 tags: tags,
                 title: title,
                 due: due,
+                links: links,
                 isEditing: false
             });
         }
