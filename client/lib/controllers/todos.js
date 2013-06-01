@@ -40,10 +40,8 @@
                 url:         '/todos/' + todo.get('_id'),
                 type:        'DELETE'
             }).success(function (response) {
-                console.log('deleted', response);
                 self.removeObject(todo);
             }).error(function (err) {
-                console.log('err', err);
             });
         },
 
@@ -59,16 +57,13 @@
                 data:        JSON.stringify(todo),
                 processData: false
             }).success(function (response) {
-                console.log('updated', response.todo);
             }).error(function (err) {
-                console.log('err', err);
             });
         },
 
         _syncPageSize: function () {
             var stored = localStorage.getItem('settings.pageSize');
             if (stored !== this.get('pageSize')) {
-                console.log('storing', stored, this.get('pageSize'));
                 localStorage.setItem('settings.pageSize', this.get('pageSize'));
             }
         }.observes('pageSize'),
@@ -92,7 +87,7 @@
 
             }).success(function (response) {
                 todo = app.Todo.create(response.todo);
-                self.insertAt(0, todo);
+                self.unshiftObject(todo);
                 todo.set('isEditing', true);
             }).error(function (err) {
                 console.log('err', err);
