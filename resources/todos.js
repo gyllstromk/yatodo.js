@@ -83,20 +83,13 @@ module.exports = function(app) {
 
     app.put('/todos/:id', function(req, res, next) {
         var todo = req.body;
-        console.log('eee', todo);
 
         require('mongodb').connect(url, function(err, connection) {
-            console.log(err);
             connection.collection('todos', function(err, collection) {
-                console.log(todo);
                 todo._id = require('mongodb').ObjectID.createFromHexString(todo._id);
                 todo.created = new Date(todo.created);
                 collection.update({ _id: todo._id }, todo, function(err, result) {
-                    console.log(err);
                     collection.save(todo, function(err, result) {
-                        console.log('ok', err, result);
-                        console.log(todo);
-                        console.log({ todo: todo });
                         res.send(200, { todo: todo });
                         connection.close();
                     });
@@ -106,27 +99,21 @@ module.exports = function(app) {
     });
 
 //     app.put('/todos/:id', function(req, res, next) {
-//         console.log('SSSSS');
 //         var todo = req.body.todo;
-//         console.log(todo);
 // 
 //         mongo.removeById('todos', todo._id, function(result) {
 //             mongo.save('todos', todo, function(results) {
-//                 console.log('res', results);
 //                 res.send(200, { todo: results });
 //             });
 //         });
 //     });
 
     app.del('/todos/:id', function(req, res, next) {
-        console.log('ee');
         var id = require('mongodb').ObjectID.createFromHexString(req.params.id);
-        console.log('deleting', id);
 
         require('mongodb').connect(url, function(err, connection) {
             connection.collection('todos', function(err, collection) {
                 collection.remove({ _id: id }, function(err, result) {
-                    console.log(result);
                     res.send(200);
                     connection.close();
                 });
@@ -141,7 +128,6 @@ module.exports = function(app) {
             connection.collection('todos', function(err, collection) {
                 var cursor = collection.find(req.query);
                 cursor.each(function(err, item) {
-                    console.log(item);
                 });
                 res.send(200);
             });
