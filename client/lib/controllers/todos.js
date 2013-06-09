@@ -161,6 +161,7 @@
 
             events: {
                 insertNewTodo: function () {
+                    app.todosController.set('page', 0);
                     app.todosController.create(
                         app.Todo.create({ title: 'New todo' }));
                 },
